@@ -27,9 +27,12 @@ Automatische Voice-start op jouw telefoon en de BYD-audioroute moeten fysiek get
 
 ## APK en broncode
 
-De lokaal gebouwde, ondertekende debug-APK staat na oplevering in
-`artifacts/chatgpt-car-voice-milestone1-debug.apk`. De broncode-zip bevat de volledige
-Android Studio-projectbestanden. Zie [installatiehandleiding](docs/INSTALLATION.md).
+[Download de APK via GitHub](https://github.com/Dennichio/ChatGPT-Car-Voice/raw/refs/heads/main/downloads/chatgpt-car-voice-milestone1-debug.apk).
+De ondertekende debug-APK staat in [`downloads/`](downloads/), samen met de
+[SHA-256-controlesom](downloads/SHA256SUMS). Dit is de eerste ontwikkelbuild;
+Voice op een echte telefoon en de BYD-audioroute zijn nog niet getest.
+De volledige broncode staat in deze repository en is ook te downloaden via
+**Code → Download ZIP**. Zie [installatiehandleiding](docs/INSTALLATION.md).
 
 Android 8.0 / API26 of hoger. Voor ontwikkeling: JDK21, Android SDK37 en de gecontroleerde
 Gradle-wrapper 9.8.1. Android Gradle Plugin 9.4.1 gebruikt ingebouwde Kotlin 2.2.10;

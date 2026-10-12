@@ -2,7 +2,9 @@
 
 ## APK installeren
 
-1. Kopieer `chatgpt-car-voice-milestone1-debug.apk` naar je Android-telefoon (Android 8+).
+1. [Download de APK via GitHub](https://github.com/Dennichio/ChatGPT-Car-Voice/raw/refs/heads/main/downloads/chatgpt-car-voice-milestone1-debug.apk)
+   op je Android-telefoon (Android 8+). Op de GitHub-bestandspagina kun je ook
+   **Download raw file** gebruiken. De controlesom staat in [`SHA256SUMS`](../downloads/SHA256SUMS).
 2. Open het bestand en geef, als Android daarom vraagt, die bestandsapp toestemming
    om deze APK te installeren. De APK is lokaal ondertekend als ontwikkelbuild;
    er is geen Play Store-publicatie of release-signering uitgevoerd.
@@ -16,7 +18,7 @@
 Met ADB:
 
 ```bash
-adb install -r artifacts/chatgpt-car-voice-milestone1-debug.apk
+adb install -r downloads/chatgpt-car-voice-milestone1-debug.apk
 adb shell am start -n be.carvoice.app/.MainActivity
 ```
 
