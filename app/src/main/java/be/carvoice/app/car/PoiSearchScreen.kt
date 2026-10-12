@@ -29,8 +29,8 @@ import be.carvoice.app.navigation.NavigationCommand
 import be.carvoice.app.navigation.NavigationRepository
 import be.carvoice.app.navigation.Poi
 import be.carvoice.app.voice.CarVoiceController
-import be.carvoice.app.integration.ExperimentalVoiceProbe
-import be.carvoice.app.integration.VoiceSettings
+import be.carvoice.app.integration.DefaultAssistantLauncher
+import be.carvoice.app.integration.AssistantLaunchResult
 import be.carvoice.app.spotify.SpotifyController
 import be.carvoice.app.spotify.SpotifyResult
 import kotlinx.coroutines.CancellationException
@@ -113,20 +113,17 @@ internal class PoiSearchScreen(carContext: CarContext) : Screen(carContext) {
                     .addText(if (listening) "Bijvoorbeeld: navigeer naar Leuven" else "Zoeken blijft beschikbaar via het zoekveld")
                     .build())
             } else if (query.isBlank()) {
-                val experimental = VoiceSettings(carContext).experimentalCarVoice
                 val saved = try { favorites.favorites() } catch (_: Exception) { emptyList() }
-                saved.take(if (experimental) 3 else 4).forEach { poi -> list.addItem(poiRow(poi)) }
+                saved.take(3).forEach { poi -> list.addItem(poiRow(poi)) }
                 list.addItem(Row.Builder().setTitle("Laadpalen in de buurt")
                     .addText("Zoeken in je navigatie-app")
                     .setOnClickListener { handoffQuery("laadpalen in de buurt") }.build())
                 list.addItem(Row.Builder().setTitle("Supermarkten in de buurt")
                     .addText("Zoeken in je navigatie-app")
                     .setOnClickListener { handoffQuery("supermarkten in de buurt") }.build())
-                if (experimental) {
-                    list.addItem(Row.Builder().setTitle("ChatGPT Voice (experimenteel)")
-                        .addText("Startverzoek; werking op dit toestel onbevestigd")
-                        .setOnClickListener { launchExperimentalVoice() }.build())
-                }
+                list.addItem(Row.Builder().setTitle("Standaard-spraakassistent")
+                    .addText("Android-systeemverzoek; kan door Android Auto worden geweigerd")
+                    .setOnClickListener { requestDefaultAssistant() }.build())
             } else {
                 results.take(5).forEach { poi -> list.addItem(poiRow(poi)) }
                 // A navigation app can resolve POI queries that Android Geocoder cannot.
@@ -242,14 +239,17 @@ internal class PoiSearchScreen(carContext: CarContext) : Screen(carContext) {
         }
     }
 
-    private fun launchExperimentalVoice() {
-        if (!VoiceSettings(carContext).experimentalCarVoice) return
+    private fun requestDefaultAssistant() {
         voice.stop()
-        val probe = ExperimentalVoiceProbe(carContext)
-        probe.availability()?.let { showVoiceError(it); return }
-        speech.speakThen("Experimenteel ChatGPT Voice-startverzoek") {
-            val message = try { probe.launch() } catch (_: Exception) { "Het experimentele startverzoek werd geweigerd" }
-            CarToast.makeText(carContext, message, CarToast.LENGTH_LONG).show()
+        speech.stop()
+        val message = when (DefaultAssistantLauncher(carContext).launch()) {
+            AssistantLaunchResult.REQUEST_SENT ->
+                "Verzoek verzonden. Android bepaalt of de standaardassistent start."
+            AssistantLaunchResult.NO_HANDLER ->
+                "Geen beschikbare Android-spraakassistent gevonden."
+            AssistantLaunchResult.BLOCKED ->
+                "Android Auto of Android blokkeert het assistentverzoek."
         }
+        CarToast.makeText(carContext, message, CarToast.LENGTH_LONG).show()
     }
 }

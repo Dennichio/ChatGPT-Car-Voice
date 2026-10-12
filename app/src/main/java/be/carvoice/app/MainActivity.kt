@@ -25,9 +25,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import be.carvoice.app.integration.ChatGptLauncher
-import be.carvoice.app.integration.LaunchResult
-import be.carvoice.app.integration.ExperimentalVoiceProbe
+import be.carvoice.app.integration.DefaultAssistantLauncher
+import be.carvoice.app.integration.AssistantLaunchResult
 import be.carvoice.app.model.LauncherState
 import be.carvoice.app.ui.CarVoiceApp
 import be.carvoice.app.ui.CarConfigurationPanel
@@ -35,11 +34,9 @@ import be.carvoice.app.spotify.SpotifyController
 import be.carvoice.app.spotify.SpotifyStatus
 
 class MainActivity : ComponentActivity() {
-    private lateinit var launcher: ChatGptLauncher
     private lateinit var audio: AudioManager
     private var state by mutableStateOf(LauncherState())
     private var microphoneGranted by mutableStateOf(false)
-    private var probeStatus by mutableStateOf("Nog niet getest; er is geen officiële Voice-startgarantie.")
     private var spotifyStatus by mutableStateOf(SpotifyStatus(false, false, null, false, false, false, false))
     private val microphonePermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         microphoneGranted = granted
@@ -51,7 +48,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        launcher = ChatGptLauncher(this)
         audio = getSystemService(AudioManager::class.java)
         audio.registerAudioDeviceCallback(deviceCallback, Handler(Looper.getMainLooper()))
         try {
@@ -69,18 +65,13 @@ class MainActivity : ComponentActivity() {
             Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing)) {
                 CarVoiceApp(
                     state = state,
-                    onLaunch = { launchChatGpt() },
+                    onLaunch = { launchDefaultAssistant() },
                     onRefresh = { refresh(); state = state.copy(status = "Verbindingen opnieuw gecontroleerd.") },
-                    onInstall = {
-                        if (!launcher.openStore()) state = state.copy(status = "Geen app beschikbaar om Google Play te openen.")
-                    },
                     setupContent = {
                         CarConfigurationPanel(
                             context = this@MainActivity,
                             microphoneGranted = microphoneGranted,
                             onGrantMicrophone = { microphonePermission.launch(Manifest.permission.RECORD_AUDIO) },
-                            onVoiceProbe = { probeStatus = ExperimentalVoiceProbe(this@MainActivity).launch() },
-                            voiceProbeStatus = probeStatus,
                             spotifyStatus = spotifyStatus,
                             onGrantSpotify = {
                                 try { startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)) }
@@ -95,22 +86,19 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun launchChatGpt() {
-        state = state.copy(status = when (launcher.launch()) {
-            LaunchResult.OPENED -> "Startopdracht aan Android gegeven. Controleer in ChatGPT of Voice opent."
-            LaunchResult.UNAVAILABLE -> "ChatGPT kan niet worden geopend. Installeer of activeer de officiële app."
-            LaunchResult.BLOCKED -> "Android blokkeerde het openen van ChatGPT. Controleer je app- en werkprofielinstellingen."
+    private fun launchDefaultAssistant() {
+        state = state.copy(status = when (DefaultAssistantLauncher(this).launch()) {
+            AssistantLaunchResult.REQUEST_SENT -> "Android kreeg het assistentverzoek. Of de ingestelde assistent echt luistert, is niet bevestigd."
+            AssistantLaunchResult.NO_HANDLER -> "Android heeft geen assistent gevonden die dit verzoek kan verwerken."
+            AssistantLaunchResult.BLOCKED -> "Android heeft het assistentverzoek geweigerd."
         })
-        refresh()
     }
 
     private fun refresh() {
-        if (!::launcher.isInitialized || !::audio.isInitialized) return
+        if (!::audio.isInitialized) return
         microphoneGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
         spotifyStatus = SpotifyController(this).status()
         state = state.copy(
-            availability = launcher.availability(),
-            chatGptVersion = launcher.version(),
             audioOutputs = audio.getDevices(AudioManager.GET_DEVICES_OUTPUTS).map { device ->
                 when (device.type) {
                     AudioDeviceInfo.TYPE_BLUETOOTH_A2DP -> "Bluetooth-media-uitgang beschikbaar"

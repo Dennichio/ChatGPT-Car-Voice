@@ -1,3 +1,7 @@
+> **0.3.0-dev ontwikkeling, nog niet gevalideerd:** standaard Android-assistent
+> wordt nu via een impliciet systeemverzoek aangeroepen. Alle testresultaten en
+> APK-checksums hieronder slaan alleen op de oudere 0.2.0-build.
+>
 # Testverslag — Android Auto-ontwikkelbuild 0.2.0
 
 Uitgevoerd op 12 oktober 2026. Dit is een doorontwikkeling van dezelfde app,

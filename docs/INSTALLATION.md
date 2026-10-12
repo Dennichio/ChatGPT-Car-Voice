@@ -1,3 +1,10 @@
+> **Let op: 0.3.0-dev:** De instructies hieronder beschrijven grotendeels de
+> oudere 0.2.0 APK. In de nieuwe broncode is de directe ChatGPT-start
+> vervangen door een knop voor de Android-standaardassistent. De oude
+> experimentele ChatGPT-activiteitprobe is uit de UI verwijderd.
+> Een 0.3.0-dev-APK is nog niet gevalideerd. Installeer de oude 0.2.0 APK
+> niet als je de nieuwe functionaliteit verwacht.
+>
 # Installatie en eerste configuratie
 
 Deze handleiding geldt voor de uitgebreide `0.2.0`-broncode en de Android Auto POI-app.
