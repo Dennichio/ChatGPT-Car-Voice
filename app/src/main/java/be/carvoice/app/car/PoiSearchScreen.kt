@@ -114,7 +114,7 @@ internal class PoiSearchScreen(carContext: CarContext) : Screen(carContext) {
                     .build())
             } else if (query.isBlank()) {
                 val saved = try { favorites.favorites() } catch (_: Exception) { emptyList() }
-                saved.take(4).forEach { poi -> list.addItem(poiRow(poi)) }
+                saved.take(3).forEach { poi -> list.addItem(poiRow(poi)) }
                 list.addItem(Row.Builder().setTitle("Laadpalen in de buurt")
                     .addText("Zoeken in je navigatie-app")
                     .setOnClickListener { handoffQuery("laadpalen in de buurt") }.build())
