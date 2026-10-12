@@ -1,3 +1,10 @@
+> **Nieuwe 0.3.0-dev-wijziging:** De oorspronkelijke POI-categorie en
+> bestemmingsfuncties blijven, maar de actieve ChatGPT-specifieke
+> startproef is vervangen door een impliciet Android `ACTION_ASSIST`
+> startverzoek voor de ingestelde standaardassistent. Onderstaande
+> tekst beschrijft deels de vorige 0.2.0-implementatie. Een
+> Android Auto-hosttest en schermloze werking zijn nog niet bevestigd.
+>
 # Android Auto: POI-route, distributie en resterende onzekerheid
 
 Bijgewerkt op 12 oktober 2026 na toevoeging van een echte bestemmingzoeker aan de bestaande
