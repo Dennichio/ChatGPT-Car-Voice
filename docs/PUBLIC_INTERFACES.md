@@ -51,21 +51,34 @@ Een command is alleen verstuurd als de actieve sessie het vereiste transportacti
 Dit bevestigt niet dat Spotify het nummer uiteindelijk afspeelt. Geen Spotify SDK, appclient
 credentials of binary zijn opgenomen; zie [licentie-/herkomstnotities](../THIRD_PARTY_CODE.md).
 
-## ChatGPT
+## Android-systeemassistent (0.3.0-dev)
 
-| Mogelijkheid | Status |
-|---|---|
-| Officiële app openen | Android `PackageManager.getLaunchIntentForPackage()` voor `com.openai.chatgpt`; publieke launcheractie |
-| OpenAI-account/subscription bridge | Niet beschikbaar in deze app en niet geïmplementeerd |
-| Algemene ChatGPT-vragen / vervolgvragen | Niet geïmplementeerd |
-| Privé Voice-activity probe | Expliciete opt-in, standaard uit; stuurt `ACTION_ASSIST` naar `com.openai.voice.assistant.AssistantActivity` |
-| Stabiel ChatGPT Voice-intentcontract | Niet gevonden; probe is ongedocumenteerd en versieafhankelijk |
+De huidige gebruikersinterface start niet langer `com.openai.chatgpt` of een private
+ChatGPT-Voice-activiteit. Zij gebruikt Androids impliciete `Intent.ACTION_ASSIST`,
+zonder vaste package of componentnaam. Android bepaalt de standaardafhandeling.
 
-De probe controleert of de genoemde component zichtbaar, enabled en exported is en probeert
-dan een startverzoek. Android kan dit weigeren. Zelfs wanneer `startActivity` terugkeert,
-weet CarVoice niet of ChatGPT luistert, welke conversatie geopend is, of de auto-ingang
-gebruikt wordt. Er is geen algemene OpenAI-API, bestaande abonnementsauthenticatie of
-gesprekssessie beschikbaar in de launcher.
+De actie is bereikbaar als knop in de telefoonconfiguratie en als afzonderlijke
+actie naast de echte bestemmingszoekfuncties op het Android Auto-POI-scherm.
+
+**Grenzen:**
+
+- Een succesvol teruggekeerde `startActivity()` bevestigt uitsluitend dat
+  de aanvraag verzonden is, niet dat de spraakassistent gestart is of luistert.
+- CarAppService is voor Android-activiteitsstarts vaak achtergrondcontext.
+  De host en Android kunnen de aanroep blokkeren.
+- De assistent zelf kan een UI op de telefoon tonen. Een gegarandeerd
+  gesloten telefoonscherm en een open spraakgesprek via de automicrofoon
+  zijn met deze publieke interface niet af te dwingen.
+- Een ChatGPT-abonnement is geen beschikbare API-bridge. De app verbindt
+  geen algemene AI-conversatie rechtstreeks met de in-car audio-invoer.
+- De oude `ChatGptLauncher`, `ExperimentalVoiceProbe` en bijbehorende
+  bestanden bestaan nog als niet-aangeroepen legacybroncode maar zijn
+  niet bereikbaar vanuit de actieve interface.
+
+De POI-categorie wordt alleen gebruikt omdat de app échte bestemmingzoek-
+en navigatiehandoff-functionaliteit bezit, niet om een assistent te vermommen
+als navigatie-app. Google Play/Android Auto-hosttoelating is nog niet bevestigd.
+De nieuwe versie moet nog gecompileerd en op een Android Auto-host getest worden.
 
 ## Bronnen
 
