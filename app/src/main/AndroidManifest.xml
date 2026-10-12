@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <queries><package android:name="com.openai.chatgpt" /></queries>
+    <queries>
+        <package android:name="com.openai.chatgpt" />
+        <!-- Required by TextToSpeech engine discovery on Android 11 and newer. -->
+        <intent><action android:name="android.intent.action.TTS_SERVICE" /></intent>
+    </queries>
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
     <application android:allowBackup="false" android:fullBackupContent="false" android:dataExtractionRules="@xml/data_extraction_rules" android:label="ChatGPT Car Voice"

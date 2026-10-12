@@ -62,13 +62,13 @@ niet meegeteld als nieuwe 0.2.0-voertuig- of instrumentatievalidatie.
 
 APK: `downloads/chatgpt-car-voice-android-auto-0.2.0-debug.apk` — 54431849 bytes.
 
-SHA256: `d39866c446fb9c4ec93133e693b22fd63ac3e724b738bacc01cadedb282b9812`.
+SHA256: `be3807983a7a0c2c161211d538f33ec08aa5d3dcb87431a37964a47bb108ad2c`.
 
 Certificaat SHA256:
 `d77f93745062d1f85e90642c2c851fda6c990853731ae3ac1b13ab23b07eda9e`.
 Dit komt overeen met de eerste APK; een directe update behoudt dezelfde signing identity.
 Google Play Internal App Sharing kan opnieuw ondertekenen met een ander certificaat en
-vereist daarom een afzonderlijk update-/datamigratieplan. Geen private signing key gebundeld.
+vereist daarom een afzonderlijk update-/datamigratieplan. Geen private signing key gebundeld. De finale manifestcorrectie voegt de officiële TTS_SERVICE-query voor Android 11+ toe; assembleDebug en lintDebug zijn daarna opnieuw geslaagd. Dit verandert de hierboven getelde unit-tests niet.
 
 ## Resterende acceptatie
 
