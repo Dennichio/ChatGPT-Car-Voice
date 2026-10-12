@@ -1,5 +1,10 @@
 # Installatie en eerste telefoontest
 
+Deze handleiding beschrijft de bestaande telefoon-APK. Ze is geen Android Auto-app en
+verschijnt niet in **Launcher aanpassen**. Bediening vanuit Android Auto is nu verplicht;
+smartphoneverbeteringen zijn als fallback geschrapt. Zie
+[de haalbaarheidsconclusie](ANDROID_AUTO_FEASIBILITY.md).
+
 ## APK installeren
 
 1. [Download de APK via GitHub](https://github.com/Dennichio/ChatGPT-Car-Voice/raw/refs/heads/main/downloads/chatgpt-car-voice-milestone1-debug.apk)
@@ -50,4 +55,5 @@ Er is geen eigen scherm op Android Auto en geen stuurknoponderschepping.
 
 Geef na de eerste test door: Android-versie, ChatGPT-versie, beschikbaarheid van beide
 Voice-instellingen, nieuw/bestaand gesprek, bekabelde/draadloze Android Auto en werkelijke
-audio-/microfoonroute. Daarna kunnen aanvullende publieke startmogelijkheden worden toegevoegd.
+audio-/microfoonroute. Verdere ontwikkeling vereist een aantoonbaar ondersteunde
+bedieningsroute vanuit Android Auto; telefoonbediening is geen geaccepteerde fallback.

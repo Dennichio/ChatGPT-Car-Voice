@@ -1,5 +1,13 @@
 # Testverslag — eerste launcher-APK
 
+**Actuele onderzoeksstatus:** de gebruiker meldt installatie van de APK en afwezigheid
+in Android Auto **Launcher aanpassen**. De verklaring en primaire bronnen staan in
+[het haalbaarheidsverslag](ANDROID_AUTO_FEASIBILITY.md). Tijdens dat vervolgonderzoek
+is geen appcode gewijzigd, geen APK gebouwd en geen nieuwe instrumentatierun uitgevoerd.
+Onderstaande acht tests gelden voor de bestaande telefoonlauncher en bewijzen geen
+Android Auto-bediening. De broncode en die APK zijn inmiddels op GitHub gepubliceerd;
+herstel in een nieuwe cloudtaak blijft afzonderlijk onbevestigd.
+
 Uitgevoerd op 12 oktober 2026. De officiële ChatGPT-app is niet geïnstalleerd in de
 testemulator; er is geen echt ChatGPT-account, Voice-gesprek of BYD getest.
 

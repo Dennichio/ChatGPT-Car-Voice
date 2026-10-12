@@ -1,5 +1,12 @@
 # ChatGPT Car Voice
 
+**Android Auto-status:** de huidige APK verschijnt niet in **Launcher aanpassen** en
+voldoet niet aan de vereiste bediening vanuit Android Auto. Ontwikkelaarsopties en
+onbekende bronnen veranderen dat niet. Een ondersteunde ChatGPT-startintegratie is
+niet aangetoond. Smartphoneverbeteringen zijn op verzoek geschrapt; er wordt geen
+nieuwe APK gebouwd zonder een werkende, ondersteunde Android Auto-route.
+Zie [onderzoek en conclusie](docs/ANDROID_AUTO_FEASIBILITY.md).
+
 Een Android-launcher voor de **officiële ChatGPT-app**, bedoeld als eenvoudige startknop
 op een telefoon die met een BYD Seal U 2024 verbonden is. De app gebruikt je bestaande
 ChatGPT-app/account. **Geen OpenAI API, API-sleutel, backend of extra API-facturatie.**
@@ -60,8 +67,8 @@ simuleren uitsluitend knopacties en bewijzen geen echte ChatGPT- of Voice-start.
 - Geen Android Auto-scherm, voertuigbesturing, stuurknopinterceptie of private Voice-deeplink.
 - De detectie is een aanwijzing van projectie; beschikbare audio-uitgangen bewijzen niet
   via welke route ChatGPT opneemt of spreekt.
-- Starten vanaf de telefoon is de eerste mijlpaal. Quick Settings, eigen snelkoppelingen
-  en eventuele notificatiebediening worden pas toegevoegd **na de eerste praktijktest**.
+- De bestaande telefoonmijlpaal is onvoldoende voor de aangescherpte eis. Quick Settings,
+  telefoonsnelkoppelingen en notificaties worden niet als alternatief ontwikkeld.
 - De companion activeert geen microfoon bij verbinding met de auto.
 
 Zie [compatibiliteit](docs/CAR_COMPATIBILITY.md), [onderzoek naar startmogelijkheden](docs/PUBLIC_INTERFACES.md),

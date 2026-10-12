@@ -1,5 +1,10 @@
 # ChatGPT Car Voice — telefoon- en BYD-testchecklist
 
+**Aangescherpte acceptatie-eis:** starten moet vanuit Android Auto gebeuren. De gebruiker
+meldt dat de bestaande geïnstalleerde APK niet in **Launcher aanpassen** verschijnt.
+De onderstaande historische telefoontests zijn geen bewijs dat deze eis gehaald is.
+Zie de gerichte Android Auto-test in [het haalbaarheidsverslag](ANDROID_AUTO_FEASIBILITY.md).
+
 **Status: NIET UITGEVOERD.** Er is nog geen test gedaan met een echte telefoon waarop de officiële ChatGPT-app is geïnstalleerd en aangemeld, of in de BYD. Voer voertuigtests geparkeerd uit.
 
 ## Testgegevens

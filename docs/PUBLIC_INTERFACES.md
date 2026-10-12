@@ -3,16 +3,21 @@
 Onderzoek op 12 oktober 2026. OpenAI- en Android-documentatie hieronder zijn daadwerkelijk
 opgehaald. Beschikbaarheid op de specifieke telefoon/ChatGPT-build blijft een fysieke test.
 
+**Nieuwe hoofdvoorwaarde:** bediening vanuit Android Auto is verplicht. De gebruiker
+heeft de smartphonefallback ingetrokken. Onderstaande telefooninterfaces blijven
+onderzochte mogelijkheden, maar zijn geen ontwikkelplan of oplossing voor Android Auto.
+Zie [de Android Auto-conclusie](ANDROID_AUTO_FEASIBILITY.md).
+
 | Mogelijkheid | Bewijs en status | Implementatie |
 | --- | --- | --- |
 | Officiële app openen | Android publieke PackageManager-launcherinterface; pakket `com.openai.chatgpt` bevestigd via OpenAI Android-FAQ | In de APK; vaste pakketnaam, scoped package visibility, foutafhandeling |
 | Rechtstreeks Voice afdwingen | Geen officieel publiek Voice-intent/deeplinkcontract gevonden | Niet geïmplementeerd; geen private activiteiten/URL's |
 | Start with Voice | OpenAI FAQ: ondersteunde mobiele versies, **nieuw of leeg gesprek** | Instelling in officiële app; automatische start op telefoon nog niet getest |
 | Background conversations | OpenAI FAQ: actief gesprek kan doorgaan in andere apps/op vergrendeld scherm, tot eind-/gebruiks-/sessielimieten | Instelling in officiële app; wrapper kan sessie niet inspecteren of stoppen |
-| Eigen startschermsnelkoppeling | Android `ShortcutManager.requestPinShortcut`, bevestiging via ondersteunde launcher | Onderzochte latere uitbreiding; nog niet toegevoegd |
+| Eigen startschermsnelkoppeling | Android `ShortcutManager.requestPinShortcut`, bevestiging via ondersteunde launcher | Niet ontwikkeld: voldoet niet aan de verplichte bediening vanuit Android Auto |
 | ChatGPT Voice-shortcuts lezen/starten | `LauncherApps.startShortcut` vereist shortcut-hostrechten (launcher of actieve voice-interaction service) | Gewone companion gebruikt dit niet; gebruiker kan eigen launcher controleren |
-| Quick Settings-tegel | `TileService` met `BIND_QUICK_SETTINGS_TILE`, bewuste klik; API34+ immutable PendingIntent-overload | Onderzochte latere uitbreiding; nog niet toegevoegd |
-| Notificatie-startknop | Publieke Activity PendingIntent; Android13+ vraagt POST_NOTIFICATIONS | Optioneel later; geen blijvende notificatie/service in eerste APK |
+| Quick Settings-tegel | `TileService` met `BIND_QUICK_SETTINGS_TILE`, bewuste klik; API34+ immutable PendingIntent-overload | Niet ontwikkeld: geen Android Auto-bediening |
+| Notificatie-startknop | Publieke Activity PendingIntent; Android13+ vraagt POST_NOTIFICATIONS | Niet ontwikkeld: telefoonnotificatie is geen geschikte Android Auto-startintegratie |
 | Standaardassistent | Android biedt assistentrol en standaard-appinstellingen; ChatGPT moet in keuzelijst staan | Gebruiker controleert dit handmatig; app-/toestelgeschiktheid niet geverifieerd |
 | Stuurknop/BYD hardware | Geen publieke generieke knopinterceptie voor deze companion bevestigd | Niet geïmplementeerd; geen omzeiling van Android Auto/DiLink |
 | Android Auto-scherm | Launcher-companion is geen ondersteunde projectiecategorie | Niet geïmplementeerd; geen misleidende mediacategorisatie |
@@ -24,9 +29,9 @@ en kies ChatGPT alleen als Android het aanbiedt. Dit bewijst geen stuurknopkoppe
 Android Auto. We maken de companion geen launcher of voice-interaction service om
 shortcutrechten te verkrijgen.
 
-De eerste mijlpaal blijft beperkt tot openen en diagnostiek. Aanvullende bedieningsmogelijkheden
-volgen pas na controle op de echte telefoon, zoals de gebruiker vraagt. Geen betaalde API,
-WebRTC, backend, sessiecookies, scraping of Accessibility-automatisering.
+De bestaande eerste APK blijft beschikbaar als telefoonlauncher en voldoet niet aan de
+Android Auto-eis. Geen verdere implementatie zonder aantoonbaar ondersteunde Auto-route.
+Geen betaalde API, WebRTC, backend, sessiecookies, scraping of Accessibility-automatisering.
 
 ## Bronnen
 

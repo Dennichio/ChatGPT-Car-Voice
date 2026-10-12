@@ -1,5 +1,12 @@
 # Android Auto en BYD Seal U: compatibiliteitsplan
 
+**Actuele conclusie:** de geïnstalleerde APK wordt volgens de gebruiker niet aangeboden
+in Android Auto **Launcher aanpassen**. Dit past bij de manifestconfiguratie: de app is
+uitsluitend een telefoonlauncher. De gebruiker vereist nu bediening vanuit Android Auto
+en heeft smartphoneverbeteringen als fallback geschrapt. Zie het
+[actuele haalbaarheidsonderzoek](ANDROID_AUTO_FEASIBILITY.md); onderstaande
+telefoonfuncties beschrijven de bestaande APK en voldoen niet aan die nieuwe eis.
+
 ## Companionfunctie
 
 ChatGPT Car Voice is een launcher-companion voor de officiële ChatGPT-app voor Android (`com.openai.chatgpt`). De companion gebruikt Android `PackageManager.getLaunchIntentForPackage()` om die app te openen. Als ChatGPT niet geïnstalleerd, uitgeschakeld of niet startbaar is, meldt de companion dat. De officiële Play Store-vermelding staat op [Google Play](https://play.google.com/store/apps/details?id=com.openai.chatgpt).
