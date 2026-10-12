@@ -32,7 +32,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import be.carvoice.app.model.LaunchAvailability
 import be.carvoice.app.model.LauncherState
 
 private val Night = Color(0xFF071521)
@@ -45,22 +44,11 @@ fun CarVoiceApp(
     state: LauncherState,
     onLaunch: () -> Unit,
     onRefresh: () -> Unit,
-    onInstall: () -> Unit,
     setupContent: @Composable () -> Unit = {},
 ) {
-    val ready = state.availability == LaunchAvailability.READY
-    val availabilityText = when (state.availability) {
-        LaunchAvailability.READY -> "ChatGPT is geïnstalleerd"
-        LaunchAvailability.NOT_INSTALLED -> "ChatGPT is niet geïnstalleerd"
-        LaunchAvailability.DISABLED -> "ChatGPT is uitgeschakeld"
-        LaunchAvailability.NO_LAUNCH_ACTIVITY -> "ChatGPT kan niet worden geopend"
-    }
-    val availabilityDetail = when (state.availability) {
-        LaunchAvailability.READY -> state.chatGptVersion?.let { "Versie $it" } ?: "Klaar om te openen"
-        LaunchAvailability.NOT_INSTALLED -> "Installeer de officiële ChatGPT-app om verder te gaan."
-        LaunchAvailability.DISABLED -> "Schakel ChatGPT in via de Android-appinstellingen."
-        LaunchAvailability.NO_LAUNCH_ACTIVITY -> "Er is geen startscherm beschikbaar voor ChatGPT. Werk de app bij of installeer haar opnieuw."
-    }
+    val ready = true
+    val availabilityText = "Android-standaardassistent"
+    val availabilityDetail = "Het startverzoek gebruikt de standaardassistent die in Android is ingesteld."
 
     MaterialTheme(colorScheme = darkColorScheme(
         primary = Teal,
@@ -82,7 +70,7 @@ fun CarVoiceApp(
             ) {
                 Column(Modifier.fillMaxWidth()) {
                     Text("CARVOICE", color = Teal, fontSize = 12.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
-                    Text("ChatGPT voor onderweg", fontSize = 25.sp, lineHeight = 32.sp, fontWeight = FontWeight.SemiBold)
+                    Text("Spraak en bestemmingen onderweg", fontSize = 25.sp, lineHeight = 32.sp, fontWeight = FontWeight.SemiBold)
                 }
                 Spacer(Modifier.height(24.dp))
 
@@ -111,21 +99,12 @@ fun CarVoiceApp(
                     onClick = onLaunch,
                     enabled = ready,
                     modifier = Modifier.fillMaxWidth().height(72.dp)
-                        .semantics { contentDescription = "Open ChatGPT" },
+                        .semantics { contentDescription = "Start standaardassistent" },
                     shape = RoundedCornerShape(20.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Teal, contentColor = Night),
                 ) {
-                    Text("Open ChatGPT", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    Text("Start standaardassistent", fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 }
-                if (state.availability == LaunchAvailability.NOT_INSTALLED) {
-                    Spacer(Modifier.height(10.dp))
-                    OutlinedButton(
-                        onClick = onInstall,
-                        modifier = Modifier.fillMaxWidth().height(60.dp),
-                        shape = RoundedCornerShape(18.dp),
-                    ) { Text("Installeer officiële app", fontSize = 16.sp) }
-                }
-
                 Spacer(Modifier.height(18.dp))
                 OutlinedButton(
                     onClick = onRefresh,
@@ -148,18 +127,16 @@ fun CarVoiceApp(
                     colors = CardDefaults.cardColors(containerColor = Panel),
                 ) {
                     Column(Modifier.padding(18.dp)) {
-                        Text("Spraak starten", color = Teal, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                        Text("Standaardassistent starten", color = Teal, fontSize = 15.sp, fontWeight = FontWeight.Bold)
                         Text(
-                            "In ChatGPT: open een nieuw, leeg gesprek om Spraak automatisch te starten op ondersteunde telefoons. " +
-                                "Zet dit aan via Instellingen › Spraak › Starten met Voice (Start with Voice), als deze optie beschikbaar is in jouw geïnstalleerde app. " +
-                                "Bij een bestaand gesprek kan ChatGPT het gesprek hervatten; tik dan op het spraakpictogram.",
+                            "De app gebruikt Android ACTION_ASSIST, zonder een vaste ChatGPT-app te openen. Android Auto kan deze actie blokkeren.",
                             color = Muted,
                             fontSize = 14.sp,
                             lineHeight = 21.sp,
                             modifier = Modifier.padding(top = 8.dp),
                         )
                         Text(
-                            "Achtergrondgesprekken stel je apart in bij Instellingen › Spraak. CarVoice start geen spraaksessie.",
+                            "Een verzonden verzoek bewijst niet dat de assistent luistert. Sommige assistenten openen een venster op het telefoonscherm.",
                             color = Muted,
                             fontSize = 14.sp,
                             lineHeight = 21.sp,
@@ -169,7 +146,7 @@ fun CarVoiceApp(
                 }
                 Spacer(Modifier.height(14.dp))
                 Text(
-                    "CarVoice opent de officiële ChatGPT-app. Android Auto-opdrachten gebruiken apart de automicrofoon na je tik, met lokale spraakherkenning. ChatGPT beheert zijn eigen gesprek en account.",
+                    "De zelfstandige navigatie- en muziekopdrachten gebruiken de automicrofoon via Android Auto. Een systeemassistentverzoek werkt apart en wordt door Android afgehandeld.",
                     color = Muted,
                     fontSize = 13.sp,
                     lineHeight = 19.sp,
