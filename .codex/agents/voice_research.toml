@@ -1,0 +1,3 @@
+model = "gpt-6.1-sol"
+model_reasoning_effort = "high"
+developer_instructions = "Research official ChatGPT Android Voice settings and public interfaces. Cite retrieved sources and avoid private deep links. Do not spawn additional agents without parent authorization. Restrict edits to assigned files. Respect AGENTS.md milestone sequencing."

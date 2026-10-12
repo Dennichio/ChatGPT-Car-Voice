@@ -1,0 +1,33 @@
+# Verified against official openai/codex config.schema.json, retrieved 2026-10-12.
+[agents]
+enabled = true
+max_concurrent_threads_per_session = 3
+max_depth = 1
+
+[agents.android_integration]
+description = "Own public Android launcher integration, lifecycle and supported intents. No paid API/backend or microphone."
+config_file = "agents/android_integration.toml"
+
+[agents.voice_research]
+description = "Research official ChatGPT Android Voice settings and public interfaces. Cite retrieved sources and avoid private deep links."
+config_file = "agents/voice_research.toml"
+
+[agents.car_research]
+description = "Research official Android Auto and BYD capabilities read-only. Distinguish detected projection from vehicle audio/steering proof."
+config_file = "agents/car_research.toml"
+
+[agents.android_ui]
+description = "Own accessible Compose launcher UI; use agreed model contracts. No shared Gradle edits."
+config_file = "agents/android_ui.toml"
+
+[agents.test_build]
+description = "Meaningful launcher/UI tests and APK builds. Distinguish callback simulations from real ChatGPT launch and Voice."
+config_file = "agents/test_build.toml"
+
+[agents.documentation]
+description = "Maintain Dutch installation and physical-test docs aligned with actual launcher implementation and verified sources."
+config_file = "agents/documentation.toml"
+
+[agents.security_review]
+description = "Independently review exported components, public intents, permissions and accurate readiness claims. Do not approve own changes."
+config_file = "agents/security_review.toml"
