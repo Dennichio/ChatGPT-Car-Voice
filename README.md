@@ -1,3 +1,10 @@
+> **0.3.0-dev (broncode, nog geen gevalideerde APK):** CarVoice vraagt nu via een
+> impliciete Android `ACTION_ASSIST`-actie om de standaard ingestelde spraakassistent.
+> De POI-categorie, bestemmingen, offline navigatiespraak en Spotify blijven bestaan.
+> De 0.2.0-download hieronder is nog de **oude versie**. Een startverzoek kan door
+> Android Auto worden geblokkeerd en kan een telefooninterface openen.
+> Zie [integratiegrenzen](docs/PUBLIC_INTERFACES.md).
+>
 # ChatGPT Car Voice
 
 ChatGPT Car Voice is het bestaande Android-project met package name `be.carvoice.app`, nu
