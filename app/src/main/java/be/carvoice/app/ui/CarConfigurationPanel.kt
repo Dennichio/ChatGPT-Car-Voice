@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -15,7 +14,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -29,7 +27,6 @@ import be.carvoice.app.navigation.FavoriteStore
 import be.carvoice.app.navigation.NavigationRepository
 import be.carvoice.app.navigation.Poi
 import be.carvoice.app.voice.SpeechModelStore
-import be.carvoice.app.integration.VoiceSettings
 import be.carvoice.app.spotify.SpotifyStatus
 import java.util.UUID
 import kotlinx.coroutines.CancellationException
@@ -43,8 +40,6 @@ fun CarConfigurationPanel(
     context: Context,
     microphoneGranted: Boolean,
     onGrantMicrophone: () -> Unit,
-    onVoiceProbe: () -> Unit,
-    voiceProbeStatus: String,
     spotifyStatus: SpotifyStatus,
     onGrantSpotify: () -> Unit,
     onRefreshSpotify: () -> Unit,
@@ -61,15 +56,11 @@ fun CarConfigurationPanel(
     var saved by remember { mutableStateOf(runCatching { store.favorites() }.getOrDefault(emptyList())) }
     var status by remember { mutableStateOf<String?>(null) }
     var busy by remember { mutableStateOf(false) }
-    var confirmProbe by remember { mutableStateOf(false) }
-    val voiceSettings = remember { VoiceSettings(context.applicationContext) }
-    var experimentalEnabled by remember { mutableStateOf(voiceSettings.experimentalCarVoice) }
-    var confirmExperimental by remember { mutableStateOf(false) }
 
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(18.dp)) {
             Text("Eenmalige Android Auto-configuratie", style = MaterialTheme.typography.titleMedium)
-            Text("Stel dit geparkeerd in. Gebruik in de auto bestemmingsspraak en beschikbare Spotify-opdrachten. ChatGPT Voice is uitsluitend een experimentele startproef; een volledig gesprek via Android Auto is niet bevestigd.")
+            Text("Stel dit geparkeerd in. Gebruik op het autoscherm bestemmingsspraak en beschikbare Spotify-opdrachten. Android bepaalt welke standaardassistent een afzonderlijk startverzoek ontvangt.")
             Spacer(Modifier.height(12.dp))
             Text(if (microphoneGranted) "Microfoontoestemming: verleend" else "Microfoontoestemming: ontbreekt")
             if (!microphoneGranted) OutlinedButton(onClick = onGrantMicrophone) { Text("Microfoon toestaan") }
@@ -144,35 +135,8 @@ fun CarConfigurationPanel(
             OutlinedButton(onClick = onRefreshSpotify) { Text("Controleer Spotify-sessie") }
             Text("Pauzeren, hervatten, volgend/vorig en de titel opvragen werken alleen wanneer Spotify een actieve sessie met de vereiste mogelijkheden aanbiedt. Zoeken op artiest- of playlistnaam is niet beschikbaar.")
             Spacer(Modifier.height(16.dp))
-            Text("ChatGPT Voice-proef", style = MaterialTheme.typography.titleMedium)
-            Text(voiceProbeStatus)
-            Text("Deze ongedocumenteerde BYD Assistant-route is experimenteel. Een geslaagde telefoonstart bewijst geen Android Auto-gesprek.")
-            OutlinedButton(onClick = { confirmProbe = true }) { Text("Test experimentele ChatGPT Voice") }
-            Row {
-                Text("Experimentele Voice-start vanuit Android Auto", modifier = Modifier.weight(1f))
-                Switch(checked = experimentalEnabled, onCheckedChange = { enabled ->
-                    if (enabled) confirmExperimental = true
-                    else { experimentalEnabled = false; voiceSettings.experimentalCarVoice = false }
-                })
-            }
+            Text("Standaard Android-spraakassistent", style = MaterialTheme.typography.titleMedium)
+            Text("De knop op het Android Auto-scherm vraagt Android om de ingestelde standaardassistent te starten. De app kiest geen ChatGPT-component. Android Auto kan dit blokkeren; de assistent kan zelf een telefoonscherm tonen. Volledig schermloos gebruik is niet gegarandeerd.")
         }
     }
-    if (confirmProbe) AlertDialog(
-        onDismissRequest = { confirmProbe = false },
-        title = { Text("Experimentele Voice-start testen") },
-        text = { Text("Test geparkeerd. Dit probeert een ongedocumenteerde ChatGPT-activiteit te openen. Controleer of Voice daadwerkelijk luistert; Android Auto-bediening is hiermee niet bevestigd.") },
-        confirmButton = { TextButton(onClick = { confirmProbe = false; onVoiceProbe() }) { Text("Start test") } },
-        dismissButton = { TextButton(onClick = { confirmProbe = false }) { Text("Annuleren") } },
-    )
-    if (confirmExperimental) AlertDialog(
-        onDismissRequest = { confirmExperimental = false },
-        title = { Text("Experimentele auto-actie inschakelen") },
-        text = { Text("Hiermee wordt een extra ChatGPT Voice-proefknop in Android Auto zichtbaar. De ongedocumenteerde activiteit kan ontbreken of door Android worden geblokkeerd. Deze instelling bewijst geen luisterende sessie, automicrofoon of gesprekbediening.") },
-        confirmButton = { TextButton(onClick = {
-            experimentalEnabled = true
-            voiceSettings.experimentalCarVoice = true
-            confirmExperimental = false
-        }) { Text("Experiment inschakelen") } },
-        dismissButton = { TextButton(onClick = { confirmExperimental = false }) { Text("Annuleren") } },
-    )
 }
