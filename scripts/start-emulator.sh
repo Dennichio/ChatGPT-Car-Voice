@@ -25,7 +25,7 @@ for ((carvoice_attempt=1; carvoice_attempt<=90; carvoice_attempt++)); do
             echo "Poort 5554 bevat een andere Android-versie ($carvoice_sdk); stop geen onbekende emulator automatisch." >&2
             exit 1
         fi
-        adb -s "$carvoice_serial" shell input keyevent 82
+        adb -s "$carvoice_serial" shell wm dismiss-keyguard
         adb -s "$carvoice_serial" shell settings put global window_animation_scale 0
         adb -s "$carvoice_serial" shell settings put global transition_animation_scale 0
         adb -s "$carvoice_serial" shell settings put global animator_duration_scale 0

@@ -49,4 +49,3 @@
 ## Notities
 
 Registreer exacte Android-, ChatGPT-, Android Auto- en DiLink-versies, accountstatus en of de verbinding bedraad of draadloos was. Markeer alleen werkelijk geobserveerd gedrag als geslaagd.
-

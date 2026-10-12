@@ -34,4 +34,3 @@ De officiële Android-referenties en de OpenAI-FAQ's hieronder zijn in deze taak
 - [Android for Cars: app-typen en templates](https://developer.android.com/training/cars/apps)
 - [Android for Cars: media-apps](https://developer.android.com/training/cars/media)
 - [AndroidX CarConnection](https://developer.android.com/reference/androidx/car/app/connection/CarConnection)
-

@@ -13,7 +13,7 @@ testemulator; er is geen echt ChatGPT-account, Voice-gesprek of BYD getest.
 | Aangesloten instrumentatietests | 8 GESLAAGD | 0 fouten, 0 overgeslagen; actuele XML bevat acht benoemde testcase-elementen |
 | APK-ondertekening | GESLAAGD | `apksigner verify`: één signer, v2-signature geldig; ontwikkelbuild |
 | APK-manifest | GESLAAGD | Geen INTERNET, RECORD_AUDIO of services; alleen AndroidX app-specifieke signature-permission |
-| Native appstart | BEPERKTE BEVESTIGING | MainActivity wordt RESUMED en UI rendert; `am start -W` gaf timing-timeout van 14.459ms in trage emulator |
+| Native appstart | BEPERKTE BEVESTIGING | MainActivity wordt RESUMED en UI rendert; `am start -W` gaf timing-timeout van circa 14,5 seconden in trage emulator |
 | ChatGPT werkelijk openen | NIET UITGEVOERD | Officiële app ontbreekt in emulator; op echte telefoon testen |
 | Voice automatisch starten | NIET UITGEVOERD | Op echte telefoon, met Start with Voice én nieuw/leeg gesprek |
 | Voice/background/audio/Android Auto/BYD | NIET UITGEVOERD | Fysieke checklist vereist |
@@ -50,7 +50,8 @@ bestaande SDK-overrides `ddmlib.getprop.timeout.sec=60` en installatie-timeout v
 herkende de runner API30 en voltooide hij alle acht tests. Asserties zijn niet uitgeschakeld.
 
 De software-emulator liet ook een Android-systeem-ANR zien (`Process system isn't
-responding`) en het native `am start -W`-timingvenster liep af. Dit beperkt de
+responding`). De systeemdiagnostiek wees op PointerEventDispatcher tijdens een MENU-key
+bij emulatorstart; dit was een Android-systeemmelding. Het native `am start -W`-timingvenster liep af. Dit beperkt de
 responsiviteitsvalidatie; het is geen bewijs van foutloze werking op de telefoon. De
 companion zelf werd zichtbaar/RESUMED en de aangesloten tests slaagden.
 
