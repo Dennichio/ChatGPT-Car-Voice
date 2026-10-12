@@ -1,11 +1,12 @@
-# ChatGPT Car Voice — telefoon- en BYD-testchecklist
+# BYD Seal U en Android Auto: fysieke testchecklist
 
-**Aangescherpte acceptatie-eis:** starten moet vanuit Android Auto gebeuren. De gebruiker
-meldt dat de bestaande geïnstalleerde APK niet in **Launcher aanpassen** verschijnt.
-De onderstaande historische telefoontests zijn geen bewijs dat deze eis gehaald is.
-Zie de gerichte Android Auto-test in [het haalbaarheidsverslag](ANDROID_AUTO_FEASIBILITY.md).
+**Status: NIET UITGEVOERD IN DE ECHTE WAGEN.** Deze lijst is voor een geparkeerde setup en
+stapsgewijze validatie. De gebruiker opgegeven baseline is BYD Seal U 2024, DiLink V2.3.0
+en Android Auto 17.3; geen van die exacte softwareversies is hier fysiek bevestigd.
 
-**Status: NIET UITGEVOERD.** Er is nog geen test gedaan met een echte telefoon waarop de officiële ChatGPT-app is geïnstalleerd en aangemeld, of in de BYD. Voer voertuigtests geparkeerd uit.
+Stop als een scherm meer aandacht vraagt dan veilig geparkeerd beschikbaar is. Gebruik geen
+rijtest om een permissie, modeldownload, account, telefooninstelling of nieuwe feature te
+configureren.
 
 ## Testgegevens
 
@@ -13,44 +14,69 @@ Zie de gerichte Android Auto-test in [het haalbaarheidsverslag](ANDROID_AUTO_FEA
 |---|---|
 | Datum / tester | — |
 | Telefoonmodel / Android-versie | — |
-| ChatGPT-appversie / accountstatus | — |
-| Android Auto-versie | 17.3 volgens gebruikersbaseline; nieuwste versie niet geverifieerd |
-| BYD Seal U / DiLink | Bouwjaar 2024 en DiLink V2.3.0 volgens gebruikersbaseline; nieuwste firmware niet geverifieerd |
+| Android Auto-versie / kabel of draadloos | — |
+| CarVoice-versie / APK-hash / installatiemethode | — |
+| ChatGPT-versie | — |
+| Spotify-versie / sessiestatus | — |
+| BYD Seal U / DiLink-firmware | — |
+| Navigatie-app | — |
+| Resultaat per test | NIET UITGEVOERD |
 
-## Eerste telefoonmijlpaal
+## Distributie en zichtbaarheid
 
-| Check | Stap | Verwacht / te noteren | Resultaat |
-|---|---|---|---|
-| Officiële app | Installeer/open ChatGPT via Google Play en meld aan volgens de app. | Noteer appversie en of de app start en accounttoegang heeft. | NIET UITGEVOERD |
-| Companion-launcher | Tik in ChatGPT Car Voice op **Open ChatGPT**. | De officiële app opent; noteer foutmelding als de app ontbreekt, uitgeschakeld is of niet start. | NIET UITGEVOERD |
-| Starten met Voice: uit | Schakel in ChatGPT **Instellingen → Spraak → Starten met Voice** uit; open ChatGPT via de companion. | Noteer of ChatGPT het gespreksscherm opent. Voice wordt niet door de companion gestart. | NIET UITGEVOERD |
-| Starten met Voice: nieuw/leeg gesprek | Schakel **Starten met Voice** in en open een nieuw of leeg gesprek. | OpenAI documenteert automatische Voice-start op ondersteunde mobiele apparaten voor een nieuw/leeg gesprek. Noteer werkelijk gedrag. | NIET UITGEVOERD |
-| Bestaand gesprek hervatten | Open via de companion wanneer ChatGPT een eerder, niet-leeg gesprek kan hervatten. | Automatische Voice-start is niet gegarandeerd; controleer of de gebruiker in ChatGPT op het Voice-pictogram moet tikken. | NIET UITGEVOERD |
-| ChatGPT-shortcut | Bekijk de ChatGPT-iconopties in de Android-launcher en pin eventueel een aangeboden shortcut handmatig. | Noteer of de launcher een shortcut aanbiedt. De companion roept geen dynamische ChatGPT-shortcut aan. | NIET UITGEVOERD |
-| Standaardassistent | Bekijk Android **Instellingen → Apps → Standaard-apps → Digitale assistent**. | Noteer of ChatGPT als keuze wordt aangeboden. Geen aanbod of stuurknopwerking veronderstellen. | NIET UITGEVOERD |
+| Test | Uitvoering | Resultaat |
+|---|---|---|
+| Vertrouwde testinstallatie | Installeer exact de 0.2.0 build via de geregelde Google Play Internal Testing- of Internal App Sharing-route met toegang voor dit Play-account. Noteer Play-account en testtrack. | NIET UITGEVOERD |
+| Launcher/category discovery | Verbind Android Auto en kijk of ChatGPT Car Voice als POI-app beschikbaar is. Noteer ook **Launcher aanpassen**; forceer geen andere categorie of hidden-source workaround. | NIET UITGEVOERD |
+| Hostvalidatie | Open de POI-app via Android Auto en noteer host-/reviewfouten. Controleer dat de daadwerkelijk geteste variant past bij de distributiebron. | NIET UITGEVOERD |
+| DHU met telefoon | Start de officiële Desktop Head Unit-test met de Android Auto-telefoon aangesloten. Herhaal de POI-open/searchflow; DHU alleen zonder telefoon is geen hostintegratietest. | NIET UITGEVOERD |
 
-## Achtergrondgedrag
+## POI, geocoding en navigatiehandoff
 
-| Check | Stap | Verwacht / te noteren | Resultaat |
-|---|---|---|---|
-| Achtergrondgesprekken uit | Schakel **Achtergrondgesprekken** uit, start Voice en ga naar een andere app; vergrendel daarna het toestel. | Noteer of Voice stopt en op welk moment. | NIET UITGEVOERD |
-| Achtergrondgesprekken aan | Schakel de instelling in, start Voice en ga naar een andere app; vergrendel daarna het toestel. | OpenAI documenteert doorgaan op de achtergrond, onder voorbehoud van handmatig stoppen, geforceerd sluiten, gebruikslimieten en maximale sessieduur. Noteer gedrag en meldingen. | NIET UITGEVOERD |
-| Gesprek handmatig stoppen | Stop een achtergrondgesprek vanuit ChatGPT zelf. | Bevestig dat Voice stopt. De companion kan de ChatGPT-microfoonstatus niet uitlezen of de sessie stoppen. | NIET UITGEVOERD |
+| Test | Uitvoering | Resultaat |
+|---|---|---|
+| Adres zoeken | Zoek een exact adres met meerdere onderdelen. Controleer dat resultaten zichtbaar zijn en dat er maximaal vijf worden getoond. | NIET UITGEVOERD |
+| Ambigue bestemming | Zoek een veelvoorkomende plaatsnaam. Selecteer bewust het juiste resultaat via het detailscherm. | NIET UITGEVOERD |
+| Niets gevonden / geocoderfout | Zoek een onzinnige tekst en herhaal indien mogelijk met geocoder niet beschikbaar. Controleer duidelijke fout en geen valse bestemming. | NIET UITGEVOERD |
+| Routehandoff | Kies een bekende bestemming en controleer dat de actieve navigatie-app de locatie ontvangt en zelf de route berekent. Noteer gekozen app. | NIET UITGEVOERD |
+| Nabije laadpaal/supermarkt | Kies de nabijheidsquery en controleer dat die als zoekvraag naar de navigatie-app gaat. Noteer of de navigatie-app resultaten vindt; CarVoice levert geen eigen POI-inventaris. | NIET UITGEVOERD |
+| Favorieten | Stel Thuis, Werk en een andere favoriet in de telefoonconfiguratie in. Kies elk in de auto en controleer de juiste coördinaten en bestemming. Verwijder daarna één favoriet. | NIET UITGEVOERD |
 
-## BYD- en Android Auto-tests
+## Automicrofoon en offline spraak
 
-| Check | Stap | Verwacht / te noteren | Resultaat |
-|---|---|---|---|
-| Android Auto actief | Verbind met BYD Android Auto en open ChatGPT via de companion op de telefoon. | Noteer of ChatGPT op de telefoon opent en wat op het autoscherm zichtbaar is. De companion levert geen eigen Android Auto-scherm. | NIET UITGEVOERD |
-| Voice in de auto | Start Voice in ChatGPT en stel een korte vraag. | Noteer of antwoord goed hoorbaar is en welke bediening nodig is. Alle Voice-bediening blijft in ChatGPT. | NIET UITGEVOERD |
-| Telefoonmicrofoon | Herhaal met de telefoon op een vaste, veilige plek in de cabine. | Noteer herkenning en verstaanbaarheid. | NIET UITGEVOERD |
-| BYD-microfoon | Herhaal en bepaal of ChatGPT de BYD-microfoon gebruikt. | Noteer de daadwerkelijke ingang; ondersteuning is niet vooraf bevestigd. | NIET UITGEVOERD |
-| Autospeakers | Laat ChatGPT antwoorden met Android Auto verbonden. | Noteer of geluid via de autospeakers, telefoonspeaker of een andere route komt. | NIET UITGEVOERD |
-| Spotify en focus | Speel Spotify af; start Voice, laat een antwoord klinken en beëindig het gesprek. | Noteer pauzeren/dempen en hervatten van muziek. | NIET UITGEVOERD |
-| Navigatie | Laat navigatie actief tijdens Voice. | Noteer hoe gesproken instructies en ChatGPT-audio samengaan en of navigatie hervat. | NIET UITGEVOERD |
-| Inkomende oproep | Test geparkeerd tijdens Voice en tijdens een antwoord. | Noteer onderbreking, audioherstel en of Voice opnieuw gestart moet worden. | NIET UITGEVOERD |
-| Stuurknop | Druk op de knop die normaal de ingebouwde assistent start. | Noteer welke assistent reageert. Er is geen bevestigde Android Auto-API voor onderschepping of omleiding naar ChatGPT. | NIET UITGEVOERD |
+| Test | Uitvoering | Resultaat |
+|---|---|---|
+| Setup-permissie | Parkeer, geef RECORD_AUDIO toestemming op de telefoon en controleer de getoonde status. | NIET UITGEVOERD |
+| Modeldownload | Download het Nederlandse Vosk-model expliciet via de telefoonconfiguratie. Noteer bron, grootte, tijd en resultaat; de licentie van de gewichten is nog niet geverifieerd. | NIET UITGEVOERD |
+| Stemactie | Open Android Auto POI-scherm en tik **Spreek opdracht**. Controleer de luisterstatus en eventuele Android Auto-hostfout. | NIET UITGEVOERD |
+| Automicrofoon | Spreek rustig: “Navigeer naar Leuven”. Bevestig welke microfoon daadwerkelijk gebruikt werd (BYD, headset of anders); stemherkenning op de telefoon alleen is geen bewijs van CarAudioRecord-ingang. | NIET UITGEVOERD |
+| Lokale herkenning | Herhaal met model geïnstalleerd, netwerk uit en model al klaar. Controleer dat opdracht herkend wordt en dat de model/downloadactie niet tijdens de opname start. | NIET UITGEVOERD |
+| Niet-herkende opdracht | Geef een vraag die niet bij navigatie of ondersteunde Spotify-commando's hoort. Controleer foutmelding en dat er geen ChatGPT-antwoord wordt gesuggereerd. | NIET UITGEVOERD |
+| Stop/timeout/interruption | Stop opname; test ook audiofocusverlies door een oproep en de 30-secondenlimiet. Controleer dat partial text geen actie uitvoert. | NIET UITGEVOERD |
+| TTS-handoff | Laat een bestemming bevestigen en noteer of de korte TTS via autospeakers of andere uitvoer klinkt en of navigatieaudio terugkomt. | NIET UITGEVOERD |
 
-## Notities
+## Spotify actieve sessie
 
-Registreer exacte Android-, ChatGPT-, Android Auto- en DiLink-versies, accountstatus en of de verbinding bedraad of draadloos was. Markeer alleen werkelijk geobserveerd gedrag als geslaagd.
+| Test | Uitvoering | Resultaat |
+|---|---|---|
+| Grant vereist | Parkeer, open Androids notificatietoegangsinstelling en geef toegang bewust. Controleer status in CarVoice. | NIET UITGEVOERD |
+| Geen actieve sessie | Sluit/stop Spotify en vraag een media-actie. Controleer dat de app eerlijk meldt dat geen sessie bestaat. | NIET UITGEVOERD |
+| Actieve sessie | Open Spotify en start zelf een nummer. Controleer herkenning van tracklabel. | NIET UITGEVOERD |
+| Transportacties | Test pauze, hervat, volgend en vorig nummer. Noteer per actie of Spotify die actie in de actieve sessie aanbiedt en werkelijk uitvoert. | NIET UITGEVOERD |
+| Niet-ondersteunde zoekopdracht | Vraag een artiest of playlist. Controleer dat CarVoice meldt dat naamzoeken niet beschikbaar is en niets verzint. | NIET UITGEVOERD |
+| Notificatieprivacy | Controleer dat CarVoice enkel de mediasessie gebruikt en geen inhoud van andere meldingen toont. | NIET UITGEVOERD |
+
+## ChatGPT-proef en fysieke afronding
+
+| Test | Uitvoering | Resultaat |
+|---|---|---|
+| Normale telefoonknoop | Op telefoon, open ChatGPT via de launcher. Noteer dat dit alleen de officiële app opent. | NIET UITGEVOERD |
+| ChatGPT Voice probe | Alleen indien expliciet ingeschakeld, test geparkeerd de experimentele `ACTION_ASSIST`-probe. Noteer componentbeschikbaarheid, eventuele weigering en of Voice werkelijk luistert. Een startresultaat is geen supported-API bewijs. | NIET UITGEVOERD |
+| Gesprek in auto | Start geen rijtest op basis van alleen een geslaagde probe. Noteer of er een echte ChatGPT Voice-conversatie, car-mic, antwoorden en vervolgvragen zijn; dit is nu geen ondersteunde CarVoice-functie. | NIET UITGEVOERD |
+| Geen telefoonbediening tijdens rit | Pas na alle veilige parkeerchecks: laat een tweede persoon observeren; controleer of bestemming van autoscherm af tot routehandoff en verstaanbare feedback zonder telefoonschermbediening lukt. | NIET UITGEVOERD |
+| Android Auto / BYD combinatie | Herhaal korte geparkeerde controle van audiofocus, inkomende oproep en Android Auto-reconnect. Noteer firmware en bedraad/draadloos. | NIET UITGEVOERD |
+
+Markeer iedere rij afzonderlijk als **GESLAAGD**, **MISLUKT** of **NIET UITGEVOERD** en noteer
+de feitelijke observatie. Een geslaagde emulator- of unit-test vervangt geen DHU-, Play-track-
+of BYD-controle. Raadpleeg het root-beheerde [testverslag](TEST_REPORT.md) voor uitsluitend
+werkelijk uitgevoerde automatische en buildcontroles.

@@ -1,43 +1,93 @@
-# Android Auto en BYD Seal U: compatibiliteitsplan
+# Android Auto en BYD Seal U: huidige integratie en grenzen
 
-**Actuele conclusie:** de geïnstalleerde APK wordt volgens de gebruiker niet aangeboden
-in Android Auto **Launcher aanpassen**. Dit past bij de manifestconfiguratie: de app is
-uitsluitend een telefoonlauncher. De gebruiker vereist nu bediening vanuit Android Auto
-en heeft smartphoneverbeteringen als fallback geschrapt. Zie het
-[actuele haalbaarheidsonderzoek](ANDROID_AUTO_FEASIBILITY.md); onderstaande
-telefoonfuncties beschrijven de bestaande APK en voldoen niet aan die nieuwe eis.
+De bestaande `be.carvoice.app`-projectbasis is behouden en uitgebreid. De huidige broncode
+bevat een echte Android for Cars App Library POI-service. De oude documentatie stelde dat er
+geen geschikte categorie was; dat is vervangen door de inhoudelijke POI-implementatie. De
+manifestregistratie alleen is geen bewijs van distributietoelating of werking in een auto.
 
-## Companionfunctie
+## Wat de POI-module doet
 
-ChatGPT Car Voice is een launcher-companion voor de officiële ChatGPT-app voor Android (`com.openai.chatgpt`). De companion gebruikt Android `PackageManager.getLaunchIntentForPackage()` om die app te openen. Als ChatGPT niet geïnstalleerd, uitgeschakeld of niet startbaar is, meldt de companion dat. De officiële Play Store-vermelding staat op [Google Play](https://play.google.com/store/apps/details?id=com.openai.chatgpt).
+- `CarVoiceService` registreert de categorie `androidx.car.app.category.POI`, met de
+  `automotive_app_desc`-template-metadata en minimum host API level 5.
+- `HostValidator` laat in debug alle testhosts toe; een non-debug build gebruikt de
+  AndroidX Car App Library 1.7.0 host certificate allowlist in
+  `res/values/car_hosts.xml`.
+- De autoschermflow biedt een zoekscherm, expliciete selectie uit geocode-resultaten en een
+  detailstap voordat een route wordt overgedragen.
+- Androids platform-`Geocoder` doet best-effort adresopzoeking en geeft maximaal vijf
+  resultaten terug. Dit is geen gegarandeerde dienst of volledige lokale POI-databank.
+- Vrije nabijheidsvragen zoals laadpalen en supermarkten worden als `geo:` query aan de
+  actieve navigatiehost overgedragen. Exacte locaties worden via coördinaten doorgegeven.
+- De gebruiker kan thuis, werk en favorieten op de telefoon instellen; adressen en
+  coördinaten worden lokaal in appvoorkeuren opgeslagen.
+- Routeberekening, keuze uit navigatie-apps, verkeersinformatie en begeleiding blijven bij
+  de geselecteerde navigatie-app. CarVoice bouwt geen eigen navigatie-engine.
 
-De companion neemt geen audio op en beheert geen ChatGPT-account, gesprek, backend of API-sleutel. Na de start beheert ChatGPT de microfoon, Voice, audiofocus, antwoorden, onderbrekingen en achtergrondgedrag. Android geeft de companion geen belofte dat de launch-intent rechtstreeks Voice activeert of het laatste gesprek vervangt.
+Dit is een echte bestemmingzoeker die de POI-categorie inhoudelijk gebruikt. De implementatie
+maakt de app niet tot een navigatieapp en belooft niet dat een Android Auto-review, testtrack
+of voertuig de build accepteert.
 
-## Voice starten en een gesprek hervatten
+## Spraak en voertuiggeluid
 
-De officiële ChatGPT Android-app heeft volgens OpenAI de instelling **Instellingen → Spraak → Starten met Voice**. Als dit is ingeschakeld, opent Voice automatisch bij het openen van een **nieuw of leeg gesprek** op ondersteunde mobiele apparaten. Een launcher kan ChatGPT ook naar een eerder geopend, niet-leeg gesprek terugbrengen; dan is automatische Voice-start niet gegarandeerd en kan de gebruiker in ChatGPT op het spraakpictogram tikken.
+De gebruiker verleent microfoontoestemming vooraf op de telefoon. Een expliciete
+**Spreek opdracht**-actie in het autoscherm gebruikt `CarAudioRecord` voor PCM-invoer en
+Vosk voor offline Nederlandse herkenning. Het model moet eerst door de gebruiker gedownload
+zijn; het wordt niet meegeleverd en er is geen automatische modeldownload. De herkenning is
+opdrachtgestuurd, stopt na resultaat of uiterlijk na 30 seconden, en heeft geen ChatGPT-
+vervolggesprek. Tekst-naar-spraak geeft korte navigatie-/actiebevestigingen via Androids
+geselecteerde audio-uitvoer. Werkelijke microfoon-, speaker-, audiofocus- en BYD-routing zijn
+niet bevestigd; CarAudioRecord garandeert geen specifieke BYD-microfoon.
 
-De companion kan geen dynamische shortcut van ChatGPT aanroepen en kan niet bepalen welk gesprek ChatGPT toont. Als de Android-launcher zelf een ChatGPT-shortcut aanbiedt, kan de gebruiker die daar handmatig bekijken of vastzetten; dit is geen companionfunctie. De gebruiker kan ChatGPT eventueel als standaard digitale assistent instellen in Android als die optie op het toestel wordt aangeboden. Beschikbaarheid van ChatGPT in die keuzelijst, geschiktheid voor de Assistant-rol en werking van een eventuele BYD-stuurknop zijn niet bevestigd. De companion onderschept of omleidt de stuurknop niet.
+## Spotify
 
-## Achtergrondgesprekken en audio in de auto
+Spotify-integratie leest alleen de actieve `MediaSession` van `com.spotify.music`. De
+gebruiker moet Spotify eerst zelf starten en Androids notificatietoegang verlenen. Als de
+actieve sessie de actie aanbiedt, kan CarVoice Play, Pause, Next en Previous verzenden en
+de door Spotify gepubliceerde titel/artiest tonen. Dat is een transportbesturing van een
+bestaande sessie, geen Spotify-appclient of volledige player. Zoeken op artiest, track of
+playlist, starten van een niet-actieve sessie en afspeelapparaat kiezen worden niet
+ondersteund. Spotify SDK binaries, OAuth en developer app credentials zijn niet gebruikt.
 
-Met **Achtergrondgesprekken** ingeschakeld kan ChatGPT Voice doorgaan wanneer de gebruiker naar een andere app gaat of de telefoon vergrendelt. OpenAI noemt beperkingen: gesprekken eindigen wanneer de gebruiker ze handmatig stopt, de app geforceerd sluit, gebruikslimieten bereikt zijn of de maximale sessieduur wordt bereikt. De companion kan ChatGPT's microfoonstatus niet uitlezen of een actieve opname/Voice-sessie stoppen; beëindig een gesprek in ChatGPT zelf.
+## ChatGPT
 
-De companion biedt geen Android Auto-scherm en is geen Android Auto-media- of navigatie-app. Android Auto-projectie bewijst niet dat ChatGPT op het autoscherm verschijnt, de BYD-microfoon gebruikt of antwoordgeluid via de autospeakers afspeelt. Microfoon, speakerroute, Spotify, navigatiemeldingen, oproepen en audiofocus hangen af van de Android-telefoon, ChatGPT-versie, Android Auto en DiLink; fysieke verificatie blijft nodig.
+De telefoonknop opent de publieke launcheractiviteit van `com.openai.chatgpt`. De optionele
+in-car ChatGPT Voice-proef probeert na expliciete toestemming `ACTION_ASSIST` naar
+`com.openai.voice.assistant.AssistantActivity` te sturen. Die component is ongedocumenteerd,
+kan per appversie ontbreken of door Android worden geblokkeerd, en is geen OpenAI API.
+Een geslaagd `startActivity`-resultaat betekent uitsluitend dat Android het verzoek aannam;
+het bewijst geen luisterende Voice-sessie, gespreksturn, automicrofoon of vervolgvragen.
+ChatGPT Voice blijft daarom experimenteel en uitgeschakeld als standaard.
 
-## BYD- en versiestatus
+CarVoice beheert geen ChatGPT-account, betaalde API, abonnement, gesprekshistorie of
+achtergrondgesprek. Er is geen officiële subscription bridge of algemene OpenAI-
+gespreksinterface gevonden.
 
-BYD Seal U bouwjaar 2024, DiLink V2.3.0 en Android Auto 17.3 zijn de door de gebruiker opgegeven testbaseline. Een nieuwere officieel beschikbare Europese BYD-firmware is niet geverifieerd. Er is nog geen test met een echte telefoon/account of in de BYD uitgevoerd; alle launcher-, Voice- en voertuiggedragingen blijven praktisch te controleren.
+## Publicatie en testvoorwaarden
 
-De officiële Android-referenties en de OpenAI-FAQ's hieronder zijn in deze taak opgehaald met HTTP 200. Eerdere pogingen naar Android-documentatie waren door de proxy geweigerd; die eerdere fout is niet langer de actuele bronstatus. De BYD-firmwarestatus is afzonderlijk niet bevestigd.
+Android Auto **Onbekende bronnen** is niet genoeg om een Car App Library-app in de launcher
+te krijgen. Voor de daadwerkelijke hostdistributie is een door Android Auto vertrouwde
+installatie via een vertrouwde Play-route nodig, met toegang voor het Play-account van de
+tester. Internal Testing vereist een voor Play Console geschikte releasebuild, doorgaans
+een AAB; de debug-APK is niet zelf een Internal Testing-release. Internal App Sharing kan
+een debug-APK delen, maar herondertekent die met het Internal App Sharing-certificaat. Een
+bestaande lokaal ondertekende debug-APK kan daardoor niet als normale update worden
+overschreven. Een review/testtrack en hostkwaliteitseisen kunnen ook gelden.
+Een lokaal geïnstalleerde debug-APK kan dus correct gebouwd zijn en toch ontbreken in
+**Launcher aanpassen**. De nieuwe 0.2.0 APK en een vertrouwde distributieroute zijn nog niet
+als succesvol zichtbaar in een voertuig bevestigd.
 
-## Officiële referenties
+Android Auto Desktop Head Unit (DHU) is een test-hostweergave die met een Android Auto-
+telefoon verbonden moet worden. Een DHU-host op de computer zonder die telefoonintegratie is
+geen test van `CarAppService`. Er is nog geen DHU-hosttest van deze POI-service uitgevoerd.
 
-- [OpenAI: Voice Mode FAQ](https://help.openai.com/en/articles/8400625-voice-mode-faq)
-- [OpenAI: ChatGPT Android-app FAQ](https://help.openai.com/en/articles/8142208-chatgpt-android-app-faq)
-- [ChatGPT op Google Play](https://play.google.com/store/apps/details?id=com.openai.chatgpt)
-- [Android `PackageManager.getLaunchIntentForPackage`](https://developer.android.com/reference/android/content/pm/PackageManager#getLaunchIntentForPackage(java.lang.String))
-- [Android package visibility](https://developer.android.com/training/package-visibility)
-- [Android for Cars: app-typen en templates](https://developer.android.com/training/cars/apps)
-- [Android for Cars: media-apps](https://developer.android.com/training/cars/media)
-- [AndroidX CarConnection](https://developer.android.com/reference/androidx/car/app/connection/CarConnection)
+## BYD Seal U-status
+
+BYD Seal U 2024, DiLink V2.3.0 en Android Auto 17.3 zijn de opgegeven voertuigbaseline, niet
+door ons fysiek geverifieerde versies. Er is geen test in de echte wagen uitgevoerd. Tot de
+fysieke checklist is voltooid blijven Android Auto-launcherzichtbaarheid, BYD-microfoon,
+autospeakers, Spotify-audiofocus, navigatiehandoff en stuurbediening onbevestigd. CarVoice
+onderschept of omleidt geen stuurknoppen.
+
+Zie [installatie](INSTALLATION.md), [haalbaarheid](ANDROID_AUTO_FEASIBILITY.md),
+[publieke interfacegrenzen](PUBLIC_INTERFACES.md) en de
+[voertuigtestchecklist](VEHICLE_TEST_CHECKLIST.md).

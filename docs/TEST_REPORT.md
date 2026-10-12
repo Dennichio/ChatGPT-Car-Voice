@@ -1,74 +1,79 @@
-# Testverslag — eerste launcher-APK
+# Testverslag — Android Auto-ontwikkelbuild 0.2.0
 
-**Actuele onderzoeksstatus:** de gebruiker meldt installatie van de APK en afwezigheid
-in Android Auto **Launcher aanpassen**. De verklaring en primaire bronnen staan in
-[het haalbaarheidsverslag](ANDROID_AUTO_FEASIBILITY.md). Tijdens dat vervolgonderzoek
-is geen appcode gewijzigd, geen APK gebouwd en geen nieuwe instrumentatierun uitgevoerd.
-Onderstaande acht tests gelden voor de bestaande telefoonlauncher en bewijzen geen
-Android Auto-bediening. De broncode en die APK zijn inmiddels op GitHub gepubliceerd;
-herstel in een nieuwe cloudtaak blijft afzonderlijk onbevestigd.
+Uitgevoerd op 12 oktober 2026. Dit is een doorontwikkeling van dezelfde app,
+applicationId `be.carvoice.app`, versiecode 2. De volledige gevraagde gebruikersflow
+is **niet gevalideerd**: geen echte Android Auto-host, ChatGPT-account, geïnstalleerd
+spraakmodel, Spotify-sessie of BYD is getest.
 
-Uitgevoerd op 12 oktober 2026. De officiële ChatGPT-app is niet geïnstalleerd in de
-testemulator; er is geen echt ChatGPT-account, Voice-gesprek of BYD getest.
+## Uitgevoerde controles
 
-| Controle | Resultaat | Reikwijdte |
+| Controle | Resultaat | Praktische reikwijdte |
 | --- | --- | --- |
-| Debug-APK build | GESLAAGD | AGP9.4.1, Gradle9.8.1, ingebouwde Kotlin2.2.10, compile/target SDK37, min SDK26 |
-| Android-test-APK build | GESLAAGD | Bestaande JUnit4/Compose tests daadwerkelijk gecompileerd |
-| Android lint | GESLAAGD | 0 fouten, 0 waarschuwingen in actuele lint-XML na geforceerde regeneratie |
-| Reproduceerbare cloudsetup | GESLAAGD | `bash scripts/cloud-setup.sh` opnieuw uitgevoerd; bron-/dependencybestanden niet door installatiescript herschreven |
-| Emulatorstart | GESLAAGD MET BEPERKING | AOSP Android11/API30 x86_64, software-emulatie zonder KVM, `sys.boot_completed=1` |
-| Aangesloten instrumentatietests | 8 GESLAAGD | 0 fouten, 0 overgeslagen; actuele XML bevat acht benoemde testcase-elementen |
-| APK-ondertekening | GESLAAGD | `apksigner verify`: één signer, v2-signature geldig; ontwikkelbuild |
-| APK-manifest | GESLAAGD | Geen INTERNET, RECORD_AUDIO of services; alleen AndroidX app-specifieke signature-permission |
-| Native appstart | BEPERKTE BEVESTIGING | MainActivity wordt RESUMED en UI rendert; `am start -W` gaf timing-timeout van circa 14,5 seconden in trage emulator |
-| ChatGPT werkelijk openen | NIET UITGEVOERD | Officiële app ontbreekt in emulator; op echte telefoon testen |
-| Voice automatisch starten | NIET UITGEVOERD | Op echte telefoon, met Start with Voice én nieuw/leeg gesprek |
-| Voice/background/audio/Android Auto/BYD | NIET UITGEVOERD | Fysieke checklist vereist |
-| Herstel in nieuwe cloudtaak / publicatie | NIET UITGEVOERD | Draftsave en huidige-instancevalidatie bewijzen geen nieuwe snapshot/restauratie |
+| Bestaande baselinebuild vóór wijzigingen | GESLAAGD | assembleDebug, lintDebug, assembleDebugAndroidTest; checkpoint 610c4f5 |
+| Nieuwe debug-APK en Android-test-APK | GESLAAGD | Actuele broncode compileert; Gradle eindigde met BUILD SUCCESSFUL |
+| Unit-tests | 37 GESLAAGD | 8 suites; 0 fouten, 0 errors, 0 overgeslagen |
+| Android lint | GESLAAGD MET WAARSCHUWINGEN | 0 fouten, 5 waarschuwingen: vier KTX-conveniencesuggesties en een nieuwere JNA-versie; bekende versie blijft gepind |
+| APK-identiteit en handtekening | GESLAAGD | Zelfde app-ID en certificaat als 0.1.0; versie 0.2.0/code 2 |
+| Gecompileerd manifest | GESLAAGD | RECORD_AUDIO en INTERNET voor de nieuwe functies, POI-CarAppService, Car API 5, protected notification listener |
+| Instrumentatie op emulator | GEEN UITGEVOERDE TESTS IN EERSTE RUN | Android PackageManager viel uit; installatie/uninstall faalden vóór tests |
+| Template-, service-, preference- en permissietests | GECOMPILEERD | Werkelijke uitvoeringsstatus wordt hieronder afzonderlijk vastgelegd; geen echte Android Auto-host |
+| Onafhankelijke review | UITGEVOERD | Routing, archiefgrenzen, PCM-fragmenten, toestemming, cleanup, hostvalidatie en claims gecontroleerd; concrete fixes aangebracht |
+| Android Auto/DHU/BYD | NIET UITGEVOERD | Fysieke Android Auto-host vereist; geen voertuigbewijs |
+| Automicrofoon en modeldecodering | NIET UITGEVOERD | Geen echt Nederlands model geïnstalleerd; bronhost in cloud met proxy-403 geblokkeerd |
+| ChatGPT Voice-probe | NIET UITGEVOERD OP CHATGPT | Exported/enabled/permission-checks en foutpad geïmplementeerd; daadwerkelijke ChatGPT-versie op telefoon nodig |
+| Spotify-playback | NIET UITGEVOERD OP SPOTIFY | Alleen parser/sessiebeleid getest; werkelijke actieve mediasessie en gebruikerstoestemming nodig |
 
-## Acht werkelijk uitgevoerde tests
+## Unit-tests
 
-- `be.carvoice.app.integration.ChatGptLauncherTest.absentChatGptIsReportedUnavailableAndLaunchFailsSafely`: geslaagd (23.635s).
-- `be.carvoice.app.integration.ChatGptLauncherTest.mergedAppManifestRequestsNoMicrophoneOrInternetPermission`: geslaagd (0.690s).
-- `be.carvoice.app.integration.ChatGptLauncherTest.launcherActivityIsDiscoverableThroughAndroidMainLauncherIntent`: geslaagd (0.001s).
-- `be.carvoice.app.ui.CarVoiceAppTest.disabledStateNeverEnablesLaunch`: geslaagd (11.815s).
-- `be.carvoice.app.ui.CarVoiceAppTest.notInstalledStateDisablesLaunchAndOffersOfficialInstall`: geslaagd (11.671s).
-- `be.carvoice.app.ui.CarVoiceAppTest.guidanceExplainsVoiceStartAndManualFallback`: geslaagd (14.569s).
-- `be.carvoice.app.ui.CarVoiceAppTest.readyStateShowsDetectedVersionAndInvokesLaunchCallback`: geslaagd (12.080s).
-- `be.carvoice.app.ui.CarVoiceAppTest.missingLaunchActivityNeverEnablesLaunch`: geslaagd (10.631s).
+- FavoriteStoreTest: 2 — bewaren/vervangen/verwijderen met valide coördinaten.
+- NavigationCommandParserTest: 4 — Nederlandse bestemmings- en favoriete-plaatsopdrachten.
+- NavigationRepositoryTest: 2 — echte lege uitkomst en begrenzing/foutafhandeling via geïnjecteerde provider.
+- SpotifyCommandParserTest: 2 — ondersteunde transportopdrachten en expliciet onbevoegde zoekopdrachten.
+- SpotifySessionPolicyTest: 1 — toestemming, sessie en aangeboden transportmogelijkheden verplicht.
+- CarPcmInputStreamTest: 5 — PCM-fragmentatie, oneven reads en afgebroken laatste sample.
+- ModelArchiveTest: 14 — paden, duplicaten, grootte-/entrygrenzen, annulering en directorypayloads.
+- SpokenCommandRouterTest: 7 — gedeelde productie-routing; laadpaal/supermarkt vóór Spotify, geen gefingeerde ChatGPT-verwerking.
 
-Vijf UI-tests gebruiken expliciete fixture-statussen en tellen callbacks. Zij bewijzen
-geen echte ChatGPT-start, Bluetoothverbinding of Voice-sessie. Drie integratietests
-gebruiken Android zelf: ontbrekende-appafhandeling, daadwerkelijk merged manifest en
-de eigen publieke launcherregistratie. Er is geen fake app met de ChatGPT-pakketnaam
-geïnstalleerd en er zijn geen gesimuleerde OpenAI API-calls gebruikt.
+Deze tests bewijzen algoritmen en foutpaden, niet dat Android Auto zichtbaar is, de
+automicrofoon levert, de navigatiehost accepteert, Spotify afspeelt of ChatGPT luistert.
 
-## Omgevingsproblemen en correcties
+## Instrumentatie en omgevingsbeperking
 
-De cloudmachine biedt geen `/dev/kvm`. De zware API36/Google-emulator is gestopt; de
-launcherchecks zijn op de lichtere AOSP API30-emulator uitgevoerd. Beide cold starts
-zouden geen betrouwbare maat voor prestaties op een echte telefoon zijn.
+De AOSP Android 11/API30-emulator gebruikt software-emulatie zonder KVM. Na de cloudherstart
+was ADB bereikbaar en verscheen zelfs `sys.boot_completed=1`, terwijl Androids `package`
+en `window`-services tijdelijk verdwenen doordat system_server opnieuw opstartte.
+Daarom geldt ADB-connectiviteit of alleen boot_completed niet als voldoende readiness.
 
-Een eerste APK-installatie tijdens onvolledige Android-opstart mislukte omdat de
-PackageManager nog niet volledig geïnitialiseerd was. Na boot-readiness installeerde de
-APK succesvol. De eerste Gradle connected-run voerde nul app-tests uit: DDMLib kon de
-SDK-versie niet binnen zijn standaard getprop-timeout van twee seconden lezen. Met de
-bestaande SDK-overrides `ddmlib.getprop.timeout.sec=60` en installatie-timeout van 90s
-herkende de runner API30 en voltooide hij alle acht tests. Asserties zijn niet uitgeschakeld.
+De eerste volledige Gradle-run rapporteerde BUILD SUCCESSFUL, maar de connected runner
+kon de APK's niet installeren: `cmd: Can't find service: package`. Er ontstond geen JUnit
+connected-resultaat; een exit-codebestand met 0 en een lege protobuf-placeholder zijn
+**geen geslaagde Androidtests**. De 37 unit-tests en build/lint waren wel uitgevoerd.
+Een eventueel afzonderlijk vervolgresultaat wordt hieronder met het daadwerkelijke aantal
+testcase-elementen vermeld. Een tweede, afzonderlijke connected-poging na herstelde
+servicechecks faalde opnieuw vóór de tests: PackageManager verdween tijdens installatie
+met `Failure calling service package: Broken pipe`. Ook die run leverde geen JUnit-XML op.
+Definitief: **0 werkelijk uitgevoerde connected-tests voor deze build**. Verdere retries
+zijn gestopt omdat de software-emulator geen stabiele Android-pakketservice bood.
 
-De software-emulator liet ook een Android-systeem-ANR zien (`Process system isn't
-responding`). De systeemdiagnostiek wees op PointerEventDispatcher tijdens een MENU-key
-bij emulatorstart; dit was een Android-systeemmelding. Het native `am start -W`-timingvenster liep af. Dit beperkt de
-responsiviteitsvalidatie; het is geen bewijs van foutloze werking op de telefoon. De
-companion zelf werd zichtbaar/RESUMED en de aangesloten tests slaagden.
+De vroegere acht Androidtests voor versie 0.1.0 slaagden in de eerdere cloudrun. Ze worden
+niet meegeteld als nieuwe 0.2.0-voertuig- of instrumentatievalidatie.
 
-Een onafhankelijke agent controleerde broncode, publieke intents, gecompileerd manifest,
-permissies en claims. Gevonden testmatcher-/assertieproblemen en oude projectinstructies
-zijn gecorrigeerd. Geen hoog-ernstige beveiligingsbevinding bleef open.
+## Artefact en updatecompatibiliteit
 
-## Artefact
+APK: `downloads/chatgpt-car-voice-android-auto-0.2.0-debug.apk` — 54431849 bytes.
 
-APK: `chatgpt-car-voice-milestone1-debug.apk` — 13398825 bytes.
+SHA256: `d39866c446fb9c4ec93133e693b22fd63ac3e724b738bacc01cadedb282b9812`.
 
-SHA256: `3d181d35524af0f8773294b3c4231cc4d8134cd8610ec51c74a2cf18e83cc4e7`.
+Certificaat SHA256:
+`d77f93745062d1f85e90642c2c851fda6c990853731ae3ac1b13ab23b07eda9e`.
+Dit komt overeen met de eerste APK; een directe update behoudt dezelfde signing identity.
+Google Play Internal App Sharing kan opnieuw ondertekenen met een ander certificaat en
+vereist daarom een afzonderlijk update-/datamigratieplan. Geen private signing key gebundeld.
+
+## Resterende acceptatie
+
+Controleer op een echte, correct gedistribueerde Android Auto-installatie: app zichtbaar,
+bestemmingen/favorieten, de car-microfoon, modelherkenning, navigation handoff, audiofocus op
+Android 15+, TTS en interrupties, Spotify-opdrachten en het opt-in ChatGPT-experiment.
+De modellicentie en vertrouwde upstream-checksum zijn nog niet onafhankelijk geverifieerd.
+De app bevat geen modelgewichten, betaald OpenAI-gebruik, accountcookies of backend.

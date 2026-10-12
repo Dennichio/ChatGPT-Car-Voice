@@ -1,47 +1,78 @@
-# Publieke interfaces en ontwikkelstrategie
+# Integratiegrenzen en publieke Android-interfaces
 
-Onderzoek op 12 oktober 2026. OpenAI- en Android-documentatie hieronder zijn daadwerkelijk
-opgehaald. Beschikbaarheid op de specifieke telefoon/ChatGPT-build blijft een fysieke test.
+De 0.2.0-werkboom behoudt de gewone telefoonlauncher en voegt een echte Android Auto POI-
+service, platform-geocoding, offline spraakcommando's en actieve Spotify-mediasessiebediening
+toe. Deze interfaces leveren geen generieke ChatGPT-gespreksintegratie. Er wordt geen OpenAI
+API, aparte API-facturatie of backend gebruikt.
 
-**Nieuwe hoofdvoorwaarde:** bediening vanuit Android Auto is verplicht. De gebruiker
-heeft de smartphonefallback ingetrokken. Onderstaande telefooninterfaces blijven
-onderzochte mogelijkheden, maar zijn geen ontwikkelplan of oplossing voor Android Auto.
-Zie [de Android Auto-conclusie](ANDROID_AUTO_FEASIBILITY.md).
+## Android Auto en navigatie
 
-| Mogelijkheid | Bewijs en status | Implementatie |
-| --- | --- | --- |
-| Officiële app openen | Android publieke PackageManager-launcherinterface; pakket `com.openai.chatgpt` bevestigd via OpenAI Android-FAQ | In de APK; vaste pakketnaam, scoped package visibility, foutafhandeling |
-| Rechtstreeks Voice afdwingen | Geen officieel publiek Voice-intent/deeplinkcontract gevonden | Niet geïmplementeerd; geen private activiteiten/URL's |
-| Start with Voice | OpenAI FAQ: ondersteunde mobiele versies, **nieuw of leeg gesprek** | Instelling in officiële app; automatische start op telefoon nog niet getest |
-| Background conversations | OpenAI FAQ: actief gesprek kan doorgaan in andere apps/op vergrendeld scherm, tot eind-/gebruiks-/sessielimieten | Instelling in officiële app; wrapper kan sessie niet inspecteren of stoppen |
-| Eigen startschermsnelkoppeling | Android `ShortcutManager.requestPinShortcut`, bevestiging via ondersteunde launcher | Niet ontwikkeld: voldoet niet aan de verplichte bediening vanuit Android Auto |
-| ChatGPT Voice-shortcuts lezen/starten | `LauncherApps.startShortcut` vereist shortcut-hostrechten (launcher of actieve voice-interaction service) | Gewone companion gebruikt dit niet; gebruiker kan eigen launcher controleren |
-| Quick Settings-tegel | `TileService` met `BIND_QUICK_SETTINGS_TILE`, bewuste klik; API34+ immutable PendingIntent-overload | Niet ontwikkeld: geen Android Auto-bediening |
-| Notificatie-startknop | Publieke Activity PendingIntent; Android13+ vraagt POST_NOTIFICATIONS | Niet ontwikkeld: telefoonnotificatie is geen geschikte Android Auto-startintegratie |
-| Standaardassistent | Android biedt assistentrol en standaard-appinstellingen; ChatGPT moet in keuzelijst staan | Gebruiker controleert dit handmatig; app-/toestelgeschiktheid niet geverifieerd |
-| Stuurknop/BYD hardware | Geen publieke generieke knopinterceptie voor deze companion bevestigd | Niet geïmplementeerd; geen omzeiling van Android Auto/DiLink |
-| Android Auto-scherm | Launcher-companion is geen ondersteunde projectiecategorie | Niet geïmplementeerd; geen misleidende mediacategorisatie |
+| Interface | Gebruik | Begrenzing |
+|---|---|---|
+| AndroidX `CarAppService` / POI-categorie | Echte zoek-/selectieflow via `SearchTemplate`, detailscherm en favorieten | Play/hosttoelating en voertuiggedrag moeten nog worden getest |
+| Android `Geocoder` | Best-effort adres-/plaatsresultaten, maximaal vijf | Beschikbaarheid en juistheid verschillen per device/service; geen commerciële nabijheids-POI-database |
+| `CarContext.ACTION_NAVIGATE` met `geo:` URI | Geselecteerde coördinaten of vrije plaats-/categoriequery naar de navigatiehost | Route-engine en bestemmingsinterpretatie zijn van de actieve navigatie-app afhankelijk |
+| Android `SharedPreferences` | Thuis, werk en door de gebruiker gekozen favorieten | Lokale appopslag; geen account-sync; gegevens zijn niet met een eigen encryptielaag beschermd |
+| Android `CarAudioRecord` | PCM-invoer uit de car audio host na de in-car microfoonactie | Vereist RECORD_AUDIO vooraf; echte microfoonroute kan alleen met host/auto worden bevestigd |
 
-`RoleManager.createRequestRoleIntent(ROLE_ASSISTANT)` vraagt de rol voor de **aanroepende
-app**. Die gebruiken om CarVoice assistent te maken is geen manier om ChatGPT te selecteren.
-Controleer desgewenst **Android-instellingen → Apps → Standaard-apps → Digitale assistent**
-en kies ChatGPT alleen als Android het aanbiedt. Dit bewijst geen stuurknopkoppeling via
-Android Auto. We maken de companion geen launcher of voice-interaction service om
-shortcutrechten te verkrijgen.
+Zoeken naar een laadpaal/supermarkt wordt als query naar de navigatie-app overgedragen. Het
+wordt niet als lokaal gevonden of bevestigd resultaat voorgesteld. `geo:` handoff laat een
+geïnstalleerde navigatie-app de query en route verder afhandelen.
 
-De bestaande eerste APK blijft beschikbaar als telefoonlauncher en voldoet niet aan de
-Android Auto-eis. Geen verdere implementatie zonder aantoonbaar ondersteunde Auto-route.
-Geen betaalde API, WebRTC, backend, sessiecookies, scraping of Accessibility-automatisering.
+## Lokale spraakherkenning
+
+| Onderdeel | Gebruik | Limiet/status |
+|---|---|---|
+| Vosk Android library `0.3.75` | Offline herkenning van Nederlandse korte opdrachten | Eenmalig model apart downloaden; geen dialoogmodel of vrije ChatGPT-vragen |
+| Model `vosk-model-small-nl-0.22` | Herkenning nadat de gebruiker expliciet download kiest | Niet in APK gebundeld; licentie van modelgewichten niet geverifieerd |
+| Android TextToSpeech | Korte navigatie-/Spotify-bevestigingen | Geen volledige ChatGPT-antwoordgeneratie; gekozen TTS-engine en audio-uitgang bepalen de stem |
+
+Modelinstallatie controleert archiefpaden, grenzen, verplichte bestanden en native laden.
+De opgeslagen SHA-256 beschrijft ontvangen bytes, maar wordt niet met een vooraf vertrouwde
+upstream hash vergeleken. De modelhost gaf bij onderzoek HTTP 403, zodat licentie en exacte
+hostinhoud niet bevestigd zijn. Bekijk [derde-partijcode](../THIRD_PARTY_CODE.md) voordat je
+modelgewichten distribueert.
+
+## Spotify
+
+De implementatie gebruikt Android `MediaSessionManager` om alleen een actieve sessie met
+package `com.spotify.music` te vinden. Android-notificatietoegang is het systeemgrant dat
+nodig is om die media-sessie te lezen; de code leest geen notificatie-inhoud. Spotify moet
+eerst door de gebruiker zijn gestart.
+
+| Beschikbaar wanneer Spotify het publiceert | Niet aangeboden |
+|---|---|
+| Huidige tracklabel (titel/artiest) opvragen | Track-, artiest- of playlistsearch |
+| Play / hervatten | Spotify-accountkoppeling of OAuth |
+| Pause | Spotify-afspeelapparaat kiezen of inventariseren |
+| Next / Previous | Starten van een sessie zonder dat de gebruiker Spotify eerst opent |
+
+Een command is alleen verstuurd als de actieve sessie het vereiste transportaction aanbiedt.
+Dit bevestigt niet dat Spotify het nummer uiteindelijk afspeelt. Geen Spotify SDK, appclient
+credentials of binary zijn opgenomen; zie [licentie-/herkomstnotities](../THIRD_PARTY_CODE.md).
+
+## ChatGPT
+
+| Mogelijkheid | Status |
+|---|---|
+| Officiële app openen | Android `PackageManager.getLaunchIntentForPackage()` voor `com.openai.chatgpt`; publieke launcheractie |
+| OpenAI-account/subscription bridge | Niet beschikbaar in deze app en niet geïmplementeerd |
+| Algemene ChatGPT-vragen / vervolgvragen | Niet geïmplementeerd |
+| Privé Voice-activity probe | Expliciete opt-in, standaard uit; stuurt `ACTION_ASSIST` naar `com.openai.voice.assistant.AssistantActivity` |
+| Stabiel ChatGPT Voice-intentcontract | Niet gevonden; probe is ongedocumenteerd en versieafhankelijk |
+
+De probe controleert of de genoemde component zichtbaar, enabled en exported is en probeert
+dan een startverzoek. Android kan dit weigeren. Zelfs wanneer `startActivity` terugkeert,
+weet CarVoice niet of ChatGPT luistert, welke conversatie geopend is, of de auto-ingang
+gebruikt wordt. Er is geen algemene OpenAI-API, bestaande abonnementsauthenticatie of
+gesprekssessie beschikbaar in de launcher.
 
 ## Bronnen
 
+- [Android Car App Library](https://developer.android.com/training/cars/apps/library)
+- [Android `Geocoder`](https://developer.android.com/reference/android/location/Geocoder)
+- [Android `MediaSessionManager`](https://developer.android.com/reference/android/media/session/MediaSessionManager)
+- [Android TextToSpeech](https://developer.android.com/reference/android/speech/tts/TextToSpeech)
+- [Android public package-launch intent](https://developer.android.com/reference/android/content/pm/PackageManager#getLaunchIntentForPackage(java.lang.String))
 - [OpenAI Voice FAQ](https://help.openai.com/en/articles/8400625-voice-mode-faq)
 - [OpenAI Android FAQ](https://help.openai.com/en/articles/8142208-chatgpt-android-app-faq)
-- [Officiële Android-app](https://play.google.com/store/apps/details?id=com.openai.chatgpt)
-- [PackageManager](https://developer.android.com/reference/android/content/pm/PackageManager#getLaunchIntentForPackage(java.lang.String))
-- [Package visibility](https://developer.android.com/training/package-visibility/declaring)
-- [LauncherApps](https://developer.android.com/reference/android/content/pm/LauncherApps)
-- [ShortcutManager](https://developer.android.com/reference/android/content/pm/ShortcutManager)
-- [TileService](https://developer.android.com/reference/android/service/quicksettings/TileService)
-- [RoleManager](https://developer.android.com/reference/android/app/role/RoleManager)
-- [Android for Cars](https://developer.android.com/training/cars)

@@ -1,3 +1,3 @@
 model = "gpt-6-luna"
 model_reasoning_effort = "medium"
-developer_instructions = "Meaningful launcher/UI tests and APK builds. Distinguish callback simulations from real ChatGPT launch and Voice. Do not spawn additional agents without parent authorization. Restrict edits to assigned files. Respect AGENTS.md milestone sequencing."
+developer_instructions = "Meaningful launcher/UI tests and APK builds. Distinguish callback simulations from real ChatGPT launch and Voice. Do not spawn additional agents without parent authorization. Restrict edits to assigned files. Follow latest incremental Android Auto scope in AGENTS.md."

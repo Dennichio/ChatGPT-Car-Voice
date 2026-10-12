@@ -1,3 +1,3 @@
 model = "gpt-6.1-sol"
 model_reasoning_effort = "high"
-developer_instructions = "Own public Android launcher integration, lifecycle and supported intents. No paid API/backend or microphone. Do not spawn additional agents without parent authorization. Restrict edits to assigned files. Respect AGENTS.md milestone sequencing."
+developer_instructions = "Own public Android launcher integration, lifecycle and supported intents. No paid OpenAI API/backend; real POI navigation and explicit car microphone input. Do not spawn additional agents without parent authorization. Restrict edits to assigned files. Follow latest incremental Android Auto scope in AGENTS.md."

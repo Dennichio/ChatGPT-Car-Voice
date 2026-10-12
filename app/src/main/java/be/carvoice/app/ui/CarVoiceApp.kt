@@ -46,6 +46,7 @@ fun CarVoiceApp(
     onLaunch: () -> Unit,
     onRefresh: () -> Unit,
     onInstall: () -> Unit,
+    setupContent: @Composable () -> Unit = {},
 ) {
     val ready = state.availability == LaunchAvailability.READY
     val availabilityText = when (state.availability) {
@@ -140,6 +141,7 @@ fun CarVoiceApp(
                 }
 
                 Spacer(Modifier.height(20.dp))
+                setupContent()
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(20.dp),
@@ -167,7 +169,7 @@ fun CarVoiceApp(
                 }
                 Spacer(Modifier.height(14.dp))
                 Text(
-                    "CarVoice opent de officiële ChatGPT-app. Deze launcher neemt geen audio op en beheert geen gesprek of account.",
+                    "CarVoice opent de officiële ChatGPT-app. Android Auto-opdrachten gebruiken apart de automicrofoon na je tik, met lokale spraakherkenning. ChatGPT beheert zijn eigen gesprek en account.",
                     color = Muted,
                     fontSize = 13.sp,
                     lineHeight = 19.sp,

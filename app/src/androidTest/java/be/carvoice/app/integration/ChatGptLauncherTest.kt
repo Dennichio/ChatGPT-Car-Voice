@@ -9,6 +9,7 @@ import be.carvoice.app.MainActivity
 import be.carvoice.app.model.LaunchAvailability
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Assert.assertNotNull
 import org.junit.Assume.assumeFalse
 import org.junit.Test
@@ -41,7 +42,7 @@ class ChatGptLauncherTest {
     }
 
     @Test
-    fun mergedAppManifestRequestsNoMicrophoneOrInternetPermission() {
+    fun mergedAppManifestRequestsOnlyTheRequiredCommandPermissions() {
         @Suppress("DEPRECATION")
         val packageInfo = context.packageManager.getPackageInfo(
             context.packageName,
@@ -49,8 +50,10 @@ class ChatGptLauncherTest {
         )
         val requested = packageInfo.requestedPermissions.orEmpty().toSet()
 
-        assertFalse("Launcher must not request microphone access", "android.permission.RECORD_AUDIO" in requested)
-        assertFalse("Launcher must not request network access", "android.permission.INTERNET" in requested)
+        assertTrue("Car commands need explicit microphone permission", "android.permission.RECORD_AUDIO" in requested)
+        assertTrue("Model download and geocoding need internet access", "android.permission.INTERNET" in requested)
+        assertFalse("No firmware or assistant-settings bypass", "android.permission.WRITE_SECURE_SETTINGS" in requested)
+        assertFalse("No background phone microphone service", "android.permission.FOREGROUND_SERVICE_MICROPHONE" in requested)
     }
 
     @Test

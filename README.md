@@ -1,76 +1,76 @@
 # ChatGPT Car Voice
 
-**Android Auto-status:** de huidige APK verschijnt niet in **Launcher aanpassen** en
-voldoet niet aan de vereiste bediening vanuit Android Auto. Ontwikkelaarsopties en
-onbekende bronnen veranderen dat niet. Een ondersteunde ChatGPT-startintegratie is
-niet aangetoond. Smartphoneverbeteringen zijn op verzoek geschrapt; er wordt geen
-nieuwe APK gebouwd zonder een werkende, ondersteunde Android Auto-route.
-Zie [onderzoek en conclusie](docs/ANDROID_AUTO_FEASIBILITY.md).
+ChatGPT Car Voice is het bestaande Android-project met package name `be.carvoice.app`, nu
+uitgebreid met een echte Points of Interest (POI)-bestemmingenzoeker voor Android Auto. De
+app gebruikt de POI-categorie omdat ze echte bestemmingen toont en overdraagt. Ze is geen
+navigatie-engine en de integratie is nog niet bevestigd in de BYD Seal U.
 
-Een Android-launcher voor de **officiële ChatGPT-app**, bedoeld als eenvoudige startknop
-op een telefoon die met een BYD Seal U 2024 verbonden is. De app gebruikt je bestaande
-ChatGPT-app/account. **Geen OpenAI API, API-sleutel, backend of extra API-facturatie.**
-Het normale gebruik en de limieten van je ChatGPT-abonnement blijven van toepassing.
+Via het telefoonconfiguratiescherm kan de gebruiker microfoontoestemming geven, expliciet
+een offline Nederlands Vosk-model downloaden, en Thuis, Werk en andere favorieten opslaan.
+Op het autoscherm kan de gebruiker een adres zoeken, een geocode-resultaat kiezen of een
+vrije nabijheidsquery aan de geïnstalleerde navigatie-app overdragen. Nederlandse
+spraakopdrachten worden herkend met `CarAudioRecord` en het gedownloade model; korte
+bevestigingen gebruiken Android TextToSpeech. Androids geocoder werkt best effort en
+bestemmingshandoff is afhankelijk van een geschikte navigatie-app.
 
-De eerste mijlpaal bevat een grote **Open ChatGPT**-knop, controle van installatie en
-appversie, Android Auto-projectiedetectie en een lijst beschikbare audio-uitgangen.
-Android opent de publieke launcheractiviteit van `com.openai.chatgpt`; de companion
-neemt geen audio op en beheert geen account of spraaksessie.
+Spotify-besturing is beperkt tot een al actieve Spotify-mediasessie. Nadat de gebruiker
+Spotify zelf gestart heeft en Androids notificatietoegang heeft verleend, kan de app
+afspeel-, pauzeer-, volgende-, vorige- en huidige-trackacties aanvragen voor zover Spotify
+deze acties aanbiedt. De app zoekt niet in tracks of playlists, kiest geen afspeelapparaat,
+gebruikt geen Spotify OAuth en bevat geen Spotify SDK.
 
-## Voice instellen
+De telefoonknop opent de officiële ChatGPT-app via Androids publieke launcherinterface. Een
+experimentele Android Auto-actie probeert optioneel een ongedocumenteerde ChatGPT-activiteit
+te starten. Deze staat standaard uit en is geen ondersteunde Voice-API. Geen van beide
+routes geeft CarVoice toegang tot een ChatGPT-gesprek of abonnementsbridge. Er is geen OpenAI
+API, backend, API-sleutel of aparte API-facturatie.
 
-1. Installeer/open de officiële ChatGPT-app en meld je daar aan met je bestaande account.
-2. Open in ChatGPT **Settings → Voice → Start with Voice** (in het Nederlands mogelijk
-   **Instellingen → Spraak → Starten met Voice**), als je appversie deze instelling heeft.
-3. Open een **nieuw of leeg gesprek**. Alleen in die situatie documenteert OpenAI
-   automatische Voice-start. Een gewone appstart kan een bestaand gesprek hervatten;
-   tik dan op het Voice-pictogram in ChatGPT.
-4. Zet in ChatGPT **Background conversations / Achtergrondgesprekken** aan als een
-   actief gesprek moet doorgaan bij andere apps of een vergrendeld scherm.
-5. Mute/stop altijd in ChatGPT zelf; de companion kan dit niet op afstand doen.
+## Spraakmodel en privacy
 
-Deze instellingen zijn bevestigd in de [officiële Voice-FAQ](https://help.openai.com/en/articles/8400625-voice-mode-faq).
-Automatische Voice-start op jouw telefoon en de BYD-audioroute moeten fysiek getest worden.
+Het Vosk-model zit **niet** in de APK. De gebruiker start de download zelf vanuit de
+telefoonconfiguratie wanneer de auto geparkeerd staat. De app controleert de archiefstructuur
+en laadt het model lokaal voordat het klaar wordt gemarkeerd. De upstream host gaf tijdens
+onderzoek HTTP 403; de licentie van deze modelgewichten is niet bevestigd en mag daarom niet
+als Apache gelicentieerd worden voorgesteld. De app noteert de SHA-256 van de ontvangen bytes,
+maar vergelijkt die niet met een vertrouwde upstream-checksum.
 
-## APK en broncode
+Microfoontoestemming wordt vooraf aangevraagd; opname start pas na een expliciete
+microfoonactie in de auto. Herkenning is ontworpen om lokaal te draaien. Favoriete adressen
+en coördinaten staan op het toestel. Androids systeemgeocoder en de gekozen navigatie-app
+kunnen zoektermen of bestemmingen volgens hun eigen diensten en privacybeleid verwerken.
+Spotify-toegang gebruikt Androids mediatoestemming; CarVoice leest de actieve Spotify-sessie,
+geen notificatietekst.
 
-[Download de APK via GitHub](https://github.com/Dennichio/ChatGPT-Car-Voice/raw/refs/heads/main/downloads/chatgpt-car-voice-milestone1-debug.apk).
-De ondertekende debug-APK staat in [`downloads/`](downloads/), samen met de
-[SHA-256-controlesom](downloads/SHA256SUMS). Dit is de eerste ontwikkelbuild;
-Voice op een echte telefoon en de BYD-audioroute zijn nog niet getest.
-De volledige broncode staat in deze repository en is ook te downloaden via
-**Code → Download ZIP**. Zie [installatiehandleiding](docs/INSTALLATION.md).
+## Build en installatie
 
-Android 8.0 / API26 of hoger. Voor ontwikkeling: JDK21, Android SDK37 en de gecontroleerde
-Gradle-wrapper 9.8.1. Android Gradle Plugin 9.4.1 gebruikt ingebouwde Kotlin 2.2.10;
-Compose BOM 2026.09.00 vereist compile SDK37. Cloudsetup:
+De eerste `0.1.0`-debug-APK blijft bewaard als telefoonlauncher-checkpoint. De huidige
+broncode gebruikt `0.2.0`. [Download de nieuwe APK](https://github.com/Dennichio/ChatGPT-Car-Voice/raw/refs/heads/main/downloads/chatgpt-car-voice-android-auto-0.2.0-debug.apk).
+Het bestand staat in `downloads/`, met de [SHA-256-controlesommen](downloads/SHA256SUMS).
+Build, lint en 37 unit-tests slagen; de emulatorinstrumentatie kon wegens een uitvallende
+Android-pakketservice geen tests uitvoeren. Het is een ontwikkelbuild met nog onbevestigde
+voertuigwerking. Zie
+[installatie](docs/INSTALLATION.md) voor distributie en eenmalige configuratie.
 
-```bash
-cd /workspace/ChatGPT-Car-Voice
-bash scripts/cloud-setup.sh
-source /workspace/tooling/cloud-env.sh
-./gradlew :app:assembleDebug :app:lintDebug :app:assembleDebugAndroidTest
-```
+Voor Car App Library-apps is onbekende bronnen inschakelen op zichzelf onvoldoende voor
+Android Auto. Internal Testing vereist een voor Play Console geschikte, ondertekende
+releasebuild (meestal een AAB), een ingerichte testtrack en toegestane Play-accounttoegang;
+de debug-APK is niet rechtstreeks een release voor die track. Internal App Sharing kan een
+debug-APK accepteren, maar Play herondertekent die met de Internal App Sharing-sleutel. Dat
+certificaat verschilt van de bewaarde debug-sleutel en kan een directe update blokkeren.
+Een gewone lokale APK-update werkt alleen met dezelfde signing key. Hetzelfde package name
+garandeert geen update. Plan migratie van lokale favorieten/modeldata voordat je de
+bestaande installatie via een ander certificaat vervangt.
 
-Met een aangesloten emulator of telefoon:
+## Projectstatus
 
-```bash
-./gradlew :app:connectedDebugAndroidTest
-```
-
-Er is geen unittest-suite voor deze kleine platformlauncher; de zinvolle controles zijn
-Android-instrumentatietests en echte telefoon-/voertuigtests. De UI-callbacktests
-simuleren uitsluitend knopacties en bewijzen geen echte ChatGPT- of Voice-start.
-
-## Grenzen en volgende stap
-
-- Geen Android Auto-scherm, voertuigbesturing, stuurknopinterceptie of private Voice-deeplink.
-- De detectie is een aanwijzing van projectie; beschikbare audio-uitgangen bewijzen niet
-  via welke route ChatGPT opneemt of spreekt.
-- De bestaande telefoonmijlpaal is onvoldoende voor de aangescherpte eis. Quick Settings,
-  telefoonsnelkoppelingen en notificaties worden niet als alternatief ontwikkeld.
-- De companion activeert geen microfoon bij verbinding met de auto.
-
-Zie [compatibiliteit](docs/CAR_COMPATIBILITY.md), [onderzoek naar startmogelijkheden](docs/PUBLIC_INTERFACES.md),
-[testverslag](docs/TEST_REPORT.md), [BYD-testchecklist](docs/VEHICLE_TEST_CHECKLIST.md) en
-[multi-agentoverzicht](docs/AGENT_WORK.md).
+De broncode bevat een echte POI-service, best-effort platform-geocoding, favorieten,
+navigatiehandoff, expliciet gestarte offline spraak, beperkte Spotify-acties op een actieve
+mediasessie en een optionele ChatGPT-activiteitprobe. De volledige autoritworkflow is niet
+geverifieerd. Er is nog geen Android Auto Desktop Head Unit (DHU)-hosttest of fysieke BYD-test
+uitgevoerd en het spraakmodel is nog niet op een echt toestel getest. Zie de
+[Android Auto-notities](docs/ANDROID_AUTO_FEASIBILITY.md),
+[compatibiliteitsgids](docs/CAR_COMPATIBILITY.md),
+[grenzen van publieke interfaces](docs/PUBLIC_INTERFACES.md),
+[voertuigchecklist](docs/VEHICLE_TEST_CHECKLIST.md),
+[derde-partijvermeldingen](THIRD_PARTY_CODE.md) en het door de hoofdagent bijgehouden
+[testverslag](docs/TEST_REPORT.md).
